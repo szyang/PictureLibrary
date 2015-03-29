@@ -56,3 +56,43 @@
 *    支持 "搜索" 操作，如搜索关键字 "花" ，过滤出本地所有与花相关的图片，甚至能在网络上拉取到不多于10张与花相关的图片；
 
 *    支持 "识图" 操作，如能调用网络上某些视图的api，获取并展示到这张图片的更多信息
+
+##参考附录
+
+###常用View控件缩写对照表
+
+| 控件全名     | 缩写 | 描述           |
+|:-------------|:-----|:---------------|
+| Button       | btn  | 按钮           |
+| TextView     | txt  | 文本           |
+| EditText     | edt  | 输入控件       |
+| ImageButton  | ibtn | 图片按钮       |
+| ImageView    | img  | 图片           |
+| ListView     | list | 列表           |
+| GridView     | grid | 网格           |
+| ProgressBar  | prb  | 进度条         |
+| SeekBar      | seb  | 可拖动的进度条 |
+| RadioButtion | rab  | 单选           |
+| CheckBox     | chb  | 多选           |
+| ScrollView   | scv  | 滚动视图       |
+| Spinner      | spn  | 弹出单选       |
+| ToggleButton | tbtn | 触发按钮       |
+
+###资源类型缩写
+
+| 类型英文   | 缩写| 描述   |
+|:-----------|:----|:-------|
+| icon       | ic  | 图标   |
+| background | bg  | 背景   |
+| divider    | di  | 分割线 |
+| color      | cl  | 颜色   |
+| button     | btn | 按钮   |
+
+###图片状态
+
+| 写法     | 描述     |
+|:---------|:---------|
+| nor      | 普通状态 |
+| press    | 按下状态 |
+| select   | 被选中   |
+| unselect | 未被选中 |
