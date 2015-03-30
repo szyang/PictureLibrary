@@ -2,11 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.scut.picturelibrary.MainActivity" >
-
-    <item
-        android:id="@+id/action_settings"
+    <item
+        android:id="@+id/action_sort_name"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/sort_name"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_sort_date"
+        android:orderInCategory="100"
+        android:title="@string/sort_date"
         app:showAsAction="never"/>
 
 </menu>

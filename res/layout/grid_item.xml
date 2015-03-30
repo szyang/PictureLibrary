@@ -6,7 +6,7 @@
         android:id="@+id/img_grid_item_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:contentDescription="grid item"
+        android:contentDescription="@string/grid_item_description"
         android:src="@drawable/ic_launcher" >
     </ImageView>
 

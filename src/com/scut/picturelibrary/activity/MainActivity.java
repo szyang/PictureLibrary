@@ -1,14 +1,12 @@
 package com.scut.picturelibrary.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
@@ -17,28 +15,34 @@ import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.GridViewAdapter;
 
 /**
- * 主Activity，显示所有图片文件夹 目前显示所有图片
+ * 主Activity，显示所有图片文件夹 目前显示所有图片 使用Loader进行Cursor的异步查询和管理
  * 
  * @author 黄建斌
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+		LoaderCallbacks<Cursor> {
 	/**
 	 * 用于展示照片墙的GridView
 	 */
 	private GridView mGridView;
+	private final int LOAD_ID = 0x20150330;
 
 	/**
 	 * GridView的适配器
 	 */
 	private GridViewAdapter mAdapter;
 
+	private String mSort = MediaStore.MediaColumns.TITLE;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		mGridView = (GridView) findViewById(R.id.grid_main_photowall);
-		mAdapter = new GridViewAdapter(this, 0, get(), mGridView);
+		mAdapter = new GridViewAdapter(this, null, mGridView);
+
 		mGridView.setAdapter(mAdapter);
+		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 	}
 
 	@Override
@@ -50,10 +54,33 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		switch (id) {
+		case R.id.action_sort_name:
+			return resort(MediaStore.MediaColumns.TITLE);
+		case R.id.action_sort_date:
+			return resort("-" + MediaStore.MediaColumns.DATE_MODIFIED);
+		default:
+			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * 对cursor进行重新排序
+	 * 
+	 * @param sort
+	 *            排序规则
+	 * @return
+	 */
+	public boolean resort(String sort) {
+		if (!mSort.equals(sort)) {// 转换排序规则
+			// 设置当前规则
+			mSort = sort;
+			// 重定cursor
+			getSupportLoaderManager().restartLoader(LOAD_ID, null, this);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -63,48 +90,30 @@ public class MainActivity extends ActionBarActivity {
 		mAdapter.cancelAllTasks();
 	}
 
-	/**
-	 * 测试用，获取手机上所有图片
-	 */
-	public String[] get() {
-		List<String> list = new ArrayList<String>();
-		ContentResolver contentResolver = getContentResolver();
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
+		// 创建目标cursor
 		String[] projection = new String[] { MediaStore.Images.Media._ID,
 				MediaStore.Images.Media.BUCKET_ID, // 直接包含该图片文件的文件夹ID，防止在不同下的文件夹重名
 				MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
 				MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
 				MediaStore.Images.Media.DATA // 图片绝对路径
 		};
-		// String selection = " 0==0) group by bucket_display_name --(";
-		Cursor cursor = contentResolver.query(
+		mAdapter.setFirstEnter(true);
+		return new CursorLoader(this,
 				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
-				null, "");
-		cursor.moveToFirst();
-		int fileNum = cursor.getCount();
-		Log.d("PicLib", "total num" + fileNum);
-		for (int counter = 0; counter < fileNum; counter++) {
-			list.add(cursor.getString(cursor
-					.getColumnIndex(MediaStore.Images.Media.DATA)));
-			// Log.d("PicLib",
-			// "---Directory is:"
-			// + cursor.getString(cursor
-			// .getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
-			// + "\n   filename is "
-			// + cursor.getString(cursor
-			// .getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)));
-			// Log.d("PicLib",
-			// "    path is "
-			// + cursor.getString(cursor
-			// .getColumnIndex(MediaStore.Images.Media.DATA)));
-			// 获取略缩图
-			// Thumbnails.getThumbnail(contentResolver, cursor.getLong(cursor
-			// .getColumnIndex(MediaStore.Images.Media._ID)),
-			// Thumbnails.MICRO_KIND, new BitmapFactory.Options());
-			cursor.moveToNext();
-		}
-		cursor.close();
-		String[] result = new String[list.size()];
-		list.toArray(result);
-		return result;
+				null, mSort);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// 将新的cursor传入
+		mAdapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// 取消cursor
+		mAdapter.swapCursor(null);
 	}
 }

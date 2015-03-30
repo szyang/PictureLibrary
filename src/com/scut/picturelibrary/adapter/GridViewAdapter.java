@@ -4,13 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.support.v4.widget.CursorAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -23,8 +26,7 @@ import com.scut.picturelibrary.utils.ImageLoader;
  * @author 黄建斌
  * 
  */
-public class GridViewAdapter extends ArrayAdapter<String> implements
-		OnScrollListener {
+public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 
 	/**
 	 * 记录所有正在加载或等待加载的任务。
@@ -47,25 +49,17 @@ public class GridViewAdapter extends ArrayAdapter<String> implements
 	 */
 	private boolean isFirstEnter = true;
 
-	public GridViewAdapter(Context context, int textViewResourceId,
-			String[] objects, GridView grid) {
-		super(context, textViewResourceId, objects);
+	public GridViewAdapter(Context context, Cursor c, GridView grid) {
+		super(context, c, true);
 		taskCollection = new HashSet<BitmapWorkerTask>();
 		mGridView = grid;
 		mGridView.setOnScrollListener(this);
 	}
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		String path = getItem(position);
-		if (convertView == null) {
-			convertView = View.inflate(getContext(), R.layout.grid_item, null);
-		}
-		ImageView photo = (ImageView) convertView
-				.findViewById(R.id.img_grid_item_photo);
-		photo.setTag(path);
-		setImageView(path, photo);
-		return convertView;
+	public String getPath(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
 	}
 
 	private void setImageView(String key, ImageView imageView) {
@@ -112,7 +106,7 @@ public class GridViewAdapter extends ArrayAdapter<String> implements
 	private void loadBitmaps(int firstVisibleItem, int visibleItemCount) {
 		try {
 			for (int i = firstVisibleItem; i < (firstVisibleItem + visibleItemCount); i++) {
-				String path = getItem(i);
+				String path = getPath(i);
 				Bitmap bitmap = ImageLoader.getInstance()
 						.getBitmapFromMemoryCache(path);
 				if (bitmap == null) {// 缓存中不存在该图片，进行异步加载
@@ -178,9 +172,45 @@ public class GridViewAdapter extends ArrayAdapter<String> implements
 			taskCollection.remove(this);
 		}
 
+		/**
+		 * 获取略缩图像
+		 * 
+		 * @param path
+		 *            图像路径
+		 * @return 略缩图
+		 */
 		private Bitmap getBitmap(String path) {
 			return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
 		}
 
+	}
+
+	@Override
+	public void bindView(View v, Context context, Cursor cursor) {
+		if (cursor == null)
+			return;
+		String path = cursor.getString(cursor
+				.getColumnIndex(MediaStore.Images.Media.DATA));
+		ImageView photo = (ImageView) v.getTag();
+		photo.setTag(path);
+		setImageView(path, photo);
+	}
+
+	@Override
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		LayoutInflater inflater = LayoutInflater.from(context);
+		View v = inflater.inflate(R.layout.grid_item, parent, false);
+		ImageView photo = (ImageView) v.findViewById(R.id.img_grid_item_photo);
+		v.setTag(photo);
+		return v;
+	}
+
+	/**
+	 * 设置为初次显示 未滑动也可以自动加载
+	 * 
+	 * @param b
+	 */
+	public void setFirstEnter(boolean b) {
+		isFirstEnter = b;
 	}
 }

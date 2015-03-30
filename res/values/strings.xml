@@ -4,5 +4,8 @@
     <string name="app_name">PictureLibrary</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="sort_name">按名称排序</string>
+    <string name="grid_item_description">grid</string>
+    <string name="sort_date">按修改日期排序</string>
 
 </resources>
