@@ -97,6 +97,7 @@ public class MainActivity extends ActionBarActivity implements
 				MediaStore.Images.Media.BUCKET_ID, // 直接包含该图片文件的文件夹ID，防止在不同下的文件夹重名
 				MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
 				MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
+				MediaStore.Images.Thumbnails.DATA,//略缩图路径
 				MediaStore.Images.Media.DATA // 图片绝对路径
 		};
 		mAdapter.setFirstEnter(true);

@@ -56,10 +56,17 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		mGridView.setOnScrollListener(this);
 	}
 
+	/**
+	 * 获取要显示的图片的路径
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public String getPath(int index) {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
-		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+		// return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+		return c.getString(c.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
 	}
 
 	private void setImageView(String key, ImageView imageView) {
