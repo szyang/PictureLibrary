@@ -1,0 +1,13 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp" >
+
+    <ImageView
+        android:id="@+id/img_grid_item_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="grid item"
+        android:src="@drawable/ic_launcher" >
+    </ImageView>
+
+</RelativeLayout>
