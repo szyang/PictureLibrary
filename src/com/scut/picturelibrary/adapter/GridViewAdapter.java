@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.provider.ContactsContract.CommonDataKinds.Im;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -187,7 +188,9 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		 * @return 略缩图
 		 */
 		private Bitmap getBitmap(String path) {
-			return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
+			return ImageLoader.getImageThumbnail(path, 100, 100);
+//			return ImageLoader.decodeSampledBitmapFromResource(path, 100, 100);
+			// return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
 		}
 
 	}
