@@ -33,7 +33,8 @@ public class ImageLoader {
 			@SuppressLint("NewApi")
 			@Override
 			protected int sizeOf(String key, Bitmap bitmap) {
-				return bitmap.getByteCount();
+				 // 重写此方法来衡量每张图片的大小，默认返回图片数量。  
+	            return bitmap.getByteCount() / 1024; 
 			}
 		};
 	}
