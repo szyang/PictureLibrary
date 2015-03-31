@@ -1,6 +1,8 @@
 package com.scut.picturelibrary.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -9,6 +11,9 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.scut.picturelibrary.R;
@@ -43,6 +48,18 @@ public class MainActivity extends ActionBarActivity implements
 
 		mGridView.setAdapter(mAdapter);
 		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
+		mGridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				String path = mAdapter.getPath(position);
+				Intent it = new Intent(Intent.ACTION_VIEW); 
+				Uri uri = Uri.parse("file:///"+path); 
+				it.setDataAndType(uri, "image/*"); 
+				startActivity(it); 
+			}
+		});
 	}
 
 	@Override
