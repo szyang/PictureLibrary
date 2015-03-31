@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
 
 /**
- * 图片缓存机制，防止OOM
+ * 图片内存缓存机制，防止OOM
  * 
  * @author 黄建斌
  * 
