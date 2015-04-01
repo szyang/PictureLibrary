@@ -7,8 +7,22 @@ import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
+/**
+ * Image功能类
+ * 
+ * @author 黄建斌
+ * 
+ */
 public class ImageUtil {
 
+	/**
+	 * 计算保持原图比例需要的缩放比例，使得图片高宽小于等于指定的高宽
+	 * 
+	 * @param options
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
 	public static int calculateInSampleSize(BitmapFactory.Options options,
 			int reqWidth, int reqHeight) {
 		// 源图片的高度和宽度
@@ -95,7 +109,7 @@ public class ImageUtil {
 	}
 
 	/**
-	 * 根据ImageView获适当的压缩的宽和高
+	 * 获得指定ImageView的高宽
 	 * 
 	 * @param imageView
 	 * @return
