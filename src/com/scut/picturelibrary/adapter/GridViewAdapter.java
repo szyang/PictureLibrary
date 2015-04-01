@@ -19,7 +19,8 @@ import android.widget.ImageView;
 
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.utils.ImageLoader;
-import com.scut.picturelibrary.utils.ImageLoader.ImageSize;
+import com.scut.picturelibrary.utils.ImageUtil;
+import com.scut.picturelibrary.utils.ImageUtil.ImageSize;
 
 /**
  * 异步加载的Adapter 保证在大量图下流畅
@@ -162,7 +163,7 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 			path = params[0];
 			// 获取item视图高宽
 			ImageView imageView = (ImageView) mGridView.findViewWithTag(path);
-			ImageSize size = ImageLoader.getImageViewSize(imageView);
+			ImageSize size = ImageUtil.getImageViewSize(imageView);
 			// 根据item高宽 在后台加载图片
 			Bitmap bitmap = getBitmap(params[0], size.width, size.height);
 			if (bitmap != null) {
@@ -192,7 +193,7 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		 * @return 略缩图
 		 */
 		private Bitmap getBitmap(String path, int width, int height) {
-			return ImageLoader.getImageThumbnail(path, width, width);
+			return ImageUtil.getImageThumbnail(path, width, width);
 			// return ImageLoader.decodeSampledBitmapFromResource(path, 100,
 			// 100);
 			// return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
