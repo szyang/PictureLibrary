@@ -12,6 +12,12 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
 
+/**
+ * 使用外部ImageLoader库的Adapter
+ * 
+ * @author 黄建斌
+ * 
+ */
 public class PhotoWallAdapter extends CursorAdapter {
 
 	public PhotoWallAdapter(Context context, Cursor c) {

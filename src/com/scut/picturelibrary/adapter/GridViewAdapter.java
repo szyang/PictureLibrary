@@ -23,7 +23,7 @@ import com.scut.picturelibrary.utils.ImageUtil;
 import com.scut.picturelibrary.utils.ImageUtil.ImageSize;
 
 /**
- * 异步加载的Adapter 保证在大量图下流畅
+ * 使用内存缓存&异步加载的Adapter 保证在大量图下流畅 使用自己的ImageLoader
  * 
  * @author 黄建斌
  * 
@@ -68,16 +68,14 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
-		// return
-		// c.getString(c.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
 	}
 
 	private void setImageView(String key, ImageView imageView) {
 		Bitmap bitmap = ImageLoader.getInstance().getBitmapFromMemoryCache(key);
 		if (bitmap != null) {
 			imageView.setImageBitmap(bitmap);
-		} else {// TODO 缓存中找不到，设置默认的空白图片
-			imageView.setImageResource(R.drawable.ic_launcher);
+		} else {
+			imageView.setImageResource(R.drawable.bg_loading);
 		}
 	}
 
