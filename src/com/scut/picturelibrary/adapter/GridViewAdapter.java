@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.utils.ImageLoader;
+import com.scut.picturelibrary.utils.ImageLoader.ImageSize;
 
 /**
  * 异步加载的Adapter 保证在大量图下流畅
@@ -65,8 +66,9 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 	public String getPath(int index) {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
-		// return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
-		return c.getString(c.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
+		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+		// return
+		// c.getString(c.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
 	}
 
 	private void setImageView(String key, ImageView imageView) {
@@ -158,8 +160,11 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		@Override
 		protected Bitmap doInBackground(String... params) {
 			path = params[0];
-			// 在后台加载图片
-			Bitmap bitmap = getBitmap(params[0]);
+			// 获取item视图高宽
+			ImageView imageView = (ImageView) mGridView.findViewWithTag(path);
+			ImageSize size = ImageLoader.getImageViewSize(imageView);
+			// 根据item高宽 在后台加载图片
+			Bitmap bitmap = getBitmap(params[0], size.width, size.height);
 			if (bitmap != null) {
 				// 图片加载完成后缓存到LrcCache中
 				ImageLoader.getInstance().addBitmapToMemoryCache(params[0],
@@ -186,9 +191,10 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		 *            图像路径
 		 * @return 略缩图
 		 */
-		private Bitmap getBitmap(String path) {
-			return ImageLoader.getImageThumbnail(path, 100, 100);
-//			return ImageLoader.decodeSampledBitmapFromResource(path, 100, 100);
+		private Bitmap getBitmap(String path, int width, int height) {
+			return ImageLoader.getImageThumbnail(path, width, width);
+			// return ImageLoader.decodeSampledBitmapFromResource(path, 100,
+			// 100);
 			// return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
 		}
 

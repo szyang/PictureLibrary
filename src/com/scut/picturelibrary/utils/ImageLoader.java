@@ -1,10 +1,12 @@
 package com.scut.picturelibrary.utils;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.support.v4.util.LruCache;
+import android.util.DisplayMetrics;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 
 /**
  * 图片内存缓存机制，防止OOM
@@ -30,12 +32,11 @@ public class ImageLoader {
 		int cacheSize = maxMemory / 8;
 		// 设置图片缓存大小为程序最大可用内存的1/8
 		mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-			// TODO 能不能不限定new api?
-			@SuppressLint("NewApi")
 			@Override
 			protected int sizeOf(String key, Bitmap bitmap) {
 				// 重写此方法来衡量每张图片的大小，默认返回图片数量。
-				return bitmap.getByteCount() / 1024;
+				// return bitmap.getByteCount() / 1024;
+				return bitmap.getRowBytes() * bitmap.getHeight();
 			}
 		};
 	}
@@ -160,6 +161,52 @@ public class ImageLoader {
 		bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
 				ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 		return bitmap;
+	}
+
+	/**
+	 * 根据ImageView获适当的压缩的宽和高
+	 * 
+	 * @param imageView
+	 * @return
+	 */
+	public static ImageSize getImageViewSize(ImageView imageView) {
+
+		ImageSize imageSize = new ImageSize();
+		DisplayMetrics displayMetrics = imageView.getContext().getResources()
+				.getDisplayMetrics();
+
+		LayoutParams lp = imageView.getLayoutParams();
+
+		int width = imageView.getWidth();// 获取imageview的实际宽度
+		if (width <= 0) {
+			width = lp.width;// 获取imageview在layout中声明的宽度
+		}
+		// if (width <= 0) {
+		// width = imageView.getMaxWidth(); // 检查最大值
+		// }
+		if (width <= 0) {
+			width = displayMetrics.widthPixels;
+		}
+
+		int height = imageView.getHeight();// 获取imageview的实际高度
+		if (height <= 0) {
+			height = lp.height;// 获取imageview在layout中声明的宽度
+		}
+		// if (height <= 0) {
+		// height = imageView.getMaxHeight();// 检查最大值
+		// }
+		if (height <= 0) {
+			height = displayMetrics.heightPixels;
+		}
+		imageSize.width = width;
+		imageSize.height = height;
+
+		return imageSize;
+	}
+
+	public static class ImageSize {
+		public int width;
+		public int height;
 	}
 
 }
