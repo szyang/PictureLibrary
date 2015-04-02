@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -24,6 +23,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.PhotoWallAdapter;
+import com.scut.picturelibrary.utils.ImageVideoCursorLoader;
 
 /**
  * 主Activity，显示所有图片文件夹 目前显示所有图片 使用Loader进行Cursor的异步查询和管理
@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements
 	 */
 	private PhotoWallAdapter mAdapter;
 
-	private String mSort = MediaStore.MediaColumns.TITLE;
+	private String mSort = MediaStore.Images.Media.DISPLAY_NAME;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,11 @@ public class MainActivity extends ActionBarActivity implements
 				String path = mAdapter.getPath(position);
 				Intent it = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse("file:///" + path);
-				it.setDataAndType(uri, "image/*");
+
+				if (mAdapter.getType(position).equals("video"))
+					it.setDataAndType(uri, "video/*");
+				else
+					it.setDataAndType(uri, "image/*");
 				startActivity(it);
 			}
 		});
@@ -98,9 +102,9 @@ public class MainActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		switch (id) {// 根据选项进行排序
 		case R.id.action_sort_name:
-			return resort(MediaStore.MediaColumns.TITLE);
+			return resort(MediaStore.Images.Media.DISPLAY_NAME);
 		case R.id.action_sort_date:
-			return resort("-" + MediaStore.MediaColumns.DATE_MODIFIED);
+			return resort(MediaStore.Images.Media.DATE_MODIFIED);
 		default:
 			break;
 		}
@@ -135,17 +139,16 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
 		// 创建目标cursor
-		String[] projection = new String[] { MediaStore.Images.Media._ID,
+		String[] projection = new String[] {
+				MediaStore.Images.Media._ID,
 				MediaStore.Images.Media.BUCKET_ID, // 直接包含该图片文件的文件夹ID，防止在不同下的文件夹重名
 				MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
+				MediaStore.Images.Media.DATE_MODIFIED,
 				MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
-				MediaStore.Images.Thumbnails.DATA,// 略缩图路径
 				MediaStore.Images.Media.DATA // 图片绝对路径
 		};
 		// mAdapter.setFirstEnter(true);
-		return new CursorLoader(this,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
-				null, mSort);
+		return new ImageVideoCursorLoader(this, projection, null, null, mSort);
 	}
 
 	@Override
