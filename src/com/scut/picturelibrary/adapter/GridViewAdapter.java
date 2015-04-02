@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.scut.picturelibrary.utils.ImageUtil.ImageSize;
  * 
  */
 public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
+	private static final String TAG = "GridViewAdapter";
 
 	/**
 	 * 记录所有正在加载或等待加载的任务。
@@ -68,6 +70,12 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+	}
+
+	public String getType(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		return c.getString(c.getColumnIndex("type"));
 	}
 
 	private void setImageView(String key, ImageView imageView) {
@@ -115,12 +123,13 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		try {
 			for (int i = firstVisibleItem; i < (firstVisibleItem + visibleItemCount); i++) {
 				String path = getPath(i);
+				String type = getType(i);
 				Bitmap bitmap = ImageLoader.getInstance()
 						.getBitmapFromMemoryCache(path);
 				if (bitmap == null) {// 缓存中不存在该图片，进行异步加载
 					BitmapWorkerTask task = new BitmapWorkerTask();
 					taskCollection.add(task);
-					task.execute(path);
+					task.execute(type, path);
 				} else {
 					ImageView imageView = (ImageView) mGridView
 							.findViewWithTag(path);
@@ -158,12 +167,13 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 
 		@Override
 		protected Bitmap doInBackground(String... params) {
-			path = params[0];
+			path = params[1];
 			// 获取item视图高宽
 			ImageView imageView = (ImageView) mGridView.findViewWithTag(path);
 			ImageSize size = ImageUtil.getImageViewSize(imageView);
 			// 根据item高宽 在后台加载图片
-			Bitmap bitmap = getBitmap(params[0], size.width, size.height);
+			Bitmap bitmap = getBitmap(params[0], params[1], size.width,
+					size.height);
 			if (bitmap != null) {
 				// 图片加载完成后缓存到LrcCache中
 				ImageLoader.getInstance().addBitmapToMemoryCache(params[0],
@@ -190,11 +200,13 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 		 *            图像路径
 		 * @return 略缩图
 		 */
-		private Bitmap getBitmap(String path, int width, int height) {
+		private Bitmap getBitmap(String type, String path, int width, int height) {
+			Log.d(TAG,"getBitmap type "+type);
+			if (type.equals("video")) {
+				return ImageUtil.getVideoThumbnail(path, width, height,
+						MediaStore.Video.Thumbnails.MINI_KIND);
+			}
 			return ImageUtil.getImageThumbnail(path, width, width);
-			// return ImageLoader.decodeSampledBitmapFromResource(path, 100,
-			// 100);
-			// return ImageLoader.decodeNormaledBitmapFromResource(path, 100);
 		}
 
 	}
