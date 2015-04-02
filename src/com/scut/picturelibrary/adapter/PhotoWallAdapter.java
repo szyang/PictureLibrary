@@ -20,6 +20,9 @@ import com.scut.picturelibrary.R;
  */
 public class PhotoWallAdapter extends CursorAdapter {
 
+	@SuppressWarnings("unused")
+	private static final String TAG = "PhotoWallAdapter";
+
 	public PhotoWallAdapter(Context context, Cursor c) {
 		super(context, c, true);
 	}
@@ -28,11 +31,20 @@ public class PhotoWallAdapter extends CursorAdapter {
 	public void bindView(View v, Context context, Cursor cursor) {
 		if (cursor == null)
 			return;
-		String path = cursor.getString(cursor
+		final String path = cursor.getString(cursor
 				.getColumnIndex(MediaStore.Images.Media.DATA));
 		ImageView photo = (ImageView) v.getTag();
 		// 使用外部库ImageLoader进行图片缓存和异步加载显示
-		ImageLoader.getInstance().displayImage("file:///" + path, photo);
+		if (cursor.getString(cursor.getColumnIndex("type")).equals("video")) {
+			String id = cursor.getString(cursor
+					.getColumnIndex(MediaStore.Video.Media._ID));
+			// 视频格式的略缩图
+			ImageLoader.getInstance().displayImage(
+					"content://media/external/video/media/" + id, photo);
+		} else {
+			// 图片略缩图
+			ImageLoader.getInstance().displayImage("file:///" + path, photo);
+		}
 	}
 
 	@Override
@@ -54,5 +66,11 @@ public class PhotoWallAdapter extends CursorAdapter {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+	}
+
+	public String getType(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		return c.getString(c.getColumnIndex("type"));
 	}
 }
