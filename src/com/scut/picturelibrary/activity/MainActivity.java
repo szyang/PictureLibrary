@@ -23,7 +23,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.PhotoWallAdapter;
-import com.scut.picturelibrary.utils.ImageVideoCursorLoader;
+import com.scut.picturelibrary.loader.ImageCursorLoader;
 
 /**
  * 主Activity，显示所有图片文件夹 目前显示所有图片 使用Loader进行Cursor的异步查询和管理
@@ -69,7 +69,7 @@ public class MainActivity extends ActionBarActivity implements
 		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 		// 设置滚动时图片是否暂停加载的监听
 		PauseOnScrollListener listener = new PauseOnScrollListener(
-				ImageLoader.getInstance(), false, false);
+				ImageLoader.getInstance(), false, true);
 		mGridView.setOnScrollListener(listener);
 		// TODO 点击显示图片
 		// 目前是调用外部程序
@@ -139,16 +139,10 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
 		// 创建目标cursor
-		String[] projection = new String[] {
-				MediaStore.Images.Media._ID,
-				MediaStore.Images.Media.BUCKET_ID, // 直接包含该图片文件的文件夹ID，防止在不同下的文件夹重名
-				MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
-				MediaStore.Images.Media.DATE_MODIFIED,
-				MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
-				MediaStore.Images.Media.DATA // 图片绝对路径
-		};
 		// mAdapter.setFirstEnter(true);
-		return new ImageVideoCursorLoader(this, projection, null, null, mSort);
+		return new ImageCursorLoader(this, null, null, mSort);
+		// return new ImageVideoCursorLoader(this, projection, null, null,
+		// mSort);
 	}
 
 	@Override

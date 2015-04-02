@@ -35,7 +35,8 @@ public class PhotoWallAdapter extends CursorAdapter {
 				.getColumnIndex(MediaStore.Images.Media.DATA));
 		ImageView photo = (ImageView) v.getTag();
 		// 使用外部库ImageLoader进行图片缓存和异步加载显示
-		if (cursor.getString(cursor.getColumnIndex("type")).equals("video")) {
+		int typeIndex = cursor.getColumnIndex("type");
+		if (typeIndex >= 0 && cursor.getString(typeIndex).equals("video")) {
 			String id = cursor.getString(cursor
 					.getColumnIndex(MediaStore.Video.Media._ID));
 			// 视频格式的略缩图

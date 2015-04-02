@@ -1,10 +1,10 @@
-package com.scut.picturelibrary.utils;
-
-
+package com.scut.picturelibrary.loader;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Arrays;
+
+import com.scut.picturelibrary.utils.SortCursor;
 
 import android.content.Context;
 import android.database.Cursor;

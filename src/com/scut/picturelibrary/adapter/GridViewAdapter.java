@@ -19,7 +19,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.scut.picturelibrary.R;
-import com.scut.picturelibrary.utils.ImageLoader;
+import com.scut.picturelibrary.loader.ImageLoader;
 import com.scut.picturelibrary.utils.ImageUtil;
 import com.scut.picturelibrary.utils.ImageUtil.ImageSize;
 
