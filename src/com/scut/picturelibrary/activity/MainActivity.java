@@ -23,7 +23,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.PhotoWallAdapter;
-import com.scut.picturelibrary.loader.ImageCursorLoader;
+import com.scut.picturelibrary.loader.ImageVideoCursorLoader;
 
 /**
  * 主Activity，显示所有图片文件夹 目前显示所有图片 使用Loader进行Cursor的异步查询和管理
@@ -140,9 +140,16 @@ public class MainActivity extends ActionBarActivity implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
 		// 创建目标cursor
 		// mAdapter.setFirstEnter(true);
-		return new ImageCursorLoader(this, null, null, mSort);
-		// return new ImageVideoCursorLoader(this, projection, null, null,
-		// mSort);
+//		return new ImageCursorLoader(this, " 0==0) group by bucket_display_name --(", null, mSort);
+		 return new ImageVideoCursorLoader(this, new String[] { 
+					MediaStore.Images.Media._ID, 
+					MediaStore.Images.Media.BUCKET_ID, // 文件夹ID
+					MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
+					MediaStore.Images.Media.DATE_MODIFIED,// 修改日期
+					MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
+					MediaStore.Images.Media.DATA, // 图片绝对路径
+			}, null, null,
+		 mSort);
 	}
 
 	@Override
