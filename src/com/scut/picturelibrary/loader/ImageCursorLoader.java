@@ -5,6 +5,12 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 
+/**
+ * 配合PhotoAdapter的图片加载器 自动设置好projection和URI
+ * 
+ * @author 黄建斌
+ * 
+ */
 public class ImageCursorLoader extends CursorLoader {
 
 	public ImageCursorLoader(Context context, String selection,
