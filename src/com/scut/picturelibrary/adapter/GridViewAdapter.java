@@ -225,8 +225,8 @@ public class GridViewAdapter extends CursorAdapter implements OnScrollListener {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(R.layout.grid_item, parent, false);
-		ImageView photo = (ImageView) v.findViewById(R.id.img_grid_item_photo);
+		View v = inflater.inflate(R.layout.grid_files_item, parent, false);
+		ImageView photo = (ImageView) v.findViewById(R.id.img_grid_files_item_photo);
 		v.setTag(photo);
 		return v;
 	}

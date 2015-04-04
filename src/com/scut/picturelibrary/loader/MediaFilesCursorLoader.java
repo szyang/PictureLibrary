@@ -6,13 +6,20 @@ import java.util.Arrays;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.scut.picturelibrary.utils.SortCursor;
 
-public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
+/**
+ * 同时包括图片和视频文件的CursorLoader
+ * 
+ * @author 黄建斌
+ * 
+ */
+public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
 	final ForceLoadContentObserver mObserver;
 	@SuppressWarnings("unused")
 	private final static String TAG = "ImageVideoCursorLoader";
@@ -33,12 +40,31 @@ public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
 		Cursor cursor = null;
 		Cursor imageCursor = getContext().getContentResolver().query(
 				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, mImageProjection,
-				mSelection, mSelectionArgs, null);
+				mSelection, mSelectionArgs, mSortOrder);
 		Cursor videoCursor = getContext().getContentResolver().query(
 				MediaStore.Video.Media.EXTERNAL_CONTENT_URI, mVideoProjection,
-				mSelection, mSelectionArgs, null);
-		cursor = new SortCursor(new Cursor[] { videoCursor, imageCursor },
-				mSortOrder);
+				mSelection, mSelectionArgs, mSortOrder);
+		if (imageCursor.getCount() == 0 || videoCursor.getCount() == 0) {// 无需合并排序
+			if (imageCursor.getCount() == 0 && videoCursor.getCount() != 0) {
+				cursor = videoCursor;
+				imageCursor.close();
+			} else if (imageCursor.getCount() != 0
+					&& videoCursor.getCount() == 0) {
+				cursor = imageCursor;
+				videoCursor.close();
+			}
+			if (cursor != null) {
+				// 排序
+				cursor = new SortCursor(cursor, mSortOrder);
+				// Ensure the cursor window is filled
+				cursor.getCount();
+				cursor.registerContentObserver(mObserver);
+			}
+			return cursor;
+		}
+		cursor = new MergeCursor(new Cursor[] { videoCursor, imageCursor });
+		// 排序
+		cursor = new SortCursor(cursor, mSortOrder);
 		if (cursor != null) {
 			// Ensure the cursor window is filled
 			cursor.getCount();
@@ -74,7 +100,7 @@ public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
 	 * calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to
 	 * specify the query to perform.
 	 */
-	public ImageVideoCursorLoader(Context context) {
+	public MediaFilesCursorLoader(Context context) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
 	}
@@ -85,7 +111,7 @@ public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
 	 * ContentResolver.query()} for documentation on the meaning of the
 	 * parameters. These will be passed as-is to that call.
 	 */
-	public ImageVideoCursorLoader(Context context, String[] projection,
+	public MediaFilesCursorLoader(Context context, String[] projection,
 			String selection, String[] selectionArgs, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();

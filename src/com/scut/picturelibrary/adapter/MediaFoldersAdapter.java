@@ -8,33 +8,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
 
 /**
- * 使用外部ImageLoader库的Adapter 同时显示图片和视频的略缩图
+ * 显示文件夹
  * 
  * @author 黄建斌
  * 
  */
-public class MediaFilesAdapter extends CursorAdapter {
-
+public class MediaFoldersAdapter extends CursorAdapter {
 	@SuppressWarnings("unused")
-	private static final String TAG = "MediaFilesAdapter";
-	private int mImageHoverResource = 0;
-	private int mVideoHoverResource = R.drawable.ic_play;
+	private static final String TAG = "MediaFoldersAdapter";
 
-	public MediaFilesAdapter(Context context, Cursor c) {
+	public MediaFoldersAdapter(Context context, Cursor c) {
 		super(context, c, true);
-	}
-
-	public void setImageHoverResource(int id) {
-		mImageHoverResource = id;
-	}
-
-	public void setVideoHoverResource(int id) {
-		mVideoHoverResource = id;
 	}
 
 	@Override
@@ -53,26 +43,33 @@ public class MediaFilesAdapter extends CursorAdapter {
 			ImageLoader.getInstance().displayImage(
 					"content://media/external/video/media/" + id,
 					viewHolder.imgThumbnail);
-			viewHolder.imgHover.setImageResource(mVideoHoverResource);
+
 		} else {
 			// 图片略缩图
 			ImageLoader.getInstance().displayImage("file:///" + path,
 					viewHolder.imgThumbnail);
-			viewHolder.imgHover.setImageResource(mImageHoverResource);
 		}
+		viewHolder.txtName.setText(cursor.getString(cursor
+				.getColumnIndex(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)));
+		// TODO 设置文件夹内文件数量
+		viewHolder.txtNum.setText("共"
+				+ cursor.getString(cursor.getColumnIndex("num")) + "张");
 	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(R.layout.grid_files_item, parent, false);
+		View v = inflater.inflate(R.layout.grid_folders_item, parent, false);
 		ImageView photo = (ImageView) v
-				.findViewById(R.id.img_grid_files_item_photo);
-		ImageView hover = (ImageView) v
-				.findViewById(R.id.img_grid_files_item_hover);
+				.findViewById(R.id.img_grid_folders_item_photo);
+		TextView name = (TextView) v
+				.findViewById(R.id.txt_grid_folders_item_name);
+		TextView num = (TextView) v
+				.findViewById(R.id.txt_grid_folders_item_num);
 		ViewHolder viewHolder = new ViewHolder();
 		viewHolder.imgThumbnail = photo;
-		viewHolder.imgHover = hover;
+		viewHolder.txtName = name;
+		viewHolder.txtNum = num;
 		// 设置Tag
 		v.setTag(viewHolder);
 		return v;
@@ -89,11 +86,17 @@ public class MediaFilesAdapter extends CursorAdapter {
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
 	}
-
-	public String getType(int index) {
+	
+	public String getFolderPath(int index) {
+		String path = getPath(index);
+		int pivot = path.lastIndexOf("//");
+		return path.substring(0, pivot);
+	}
+	
+	public String getBucketId(int index){
 		Cursor c = getCursor();
 		c.moveToPosition(index);
-		return c.getString(c.getColumnIndex("type"));
+		return c.getString(c.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
 	}
 
 	/**
@@ -104,6 +107,7 @@ public class MediaFilesAdapter extends CursorAdapter {
 	 */
 	static class ViewHolder {
 		ImageView imgThumbnail;
-		ImageView imgHover;
+		TextView txtName;
+		TextView txtNum;
 	}
 }

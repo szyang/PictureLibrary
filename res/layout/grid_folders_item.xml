@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp" >
+
+    <ImageView
+        android:id="@+id/img_grid_folders_item_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/grid_item_description"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_loading" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="#33000000" >
+
+        <ImageView
+            android:id="@+id/img_grid_folders_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/grid_item_description"
+            android:maxHeight="40dp"
+            android:maxWidth="40dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_folder" />
+
+        <TextView
+            android:id="@+id/txt_grid_folders_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/img_grid_folders_item_icon"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/txt_grid_folders_item_num"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/txt_grid_folders_item_name"
+            android:layout_toRightOf="@id/img_grid_folders_item_icon"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
