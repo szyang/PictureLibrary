@@ -53,7 +53,7 @@ public class AllMediaFilesActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_folders);
+		setContentView(R.layout.activity_files);
 		initImageLoader();
 		// 进行cursorloader初始化
 		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
@@ -64,7 +64,7 @@ public class AllMediaFilesActivity extends ActionBarActivity implements
 	}
 
 	private void initView() {
-		mGridView = (GridView) findViewById(R.id.grid_folders);
+		mGridView = (GridView) findViewById(R.id.grid_files);
 		// mAdapter = new GridViewAdapter(this, null, mGridView);
 		mAdapter = new MediaFilesAdapter(this, null);
 		mGridView.setAdapter(mAdapter);

@@ -52,8 +52,8 @@ public class MediaFoldersAdapter extends CursorAdapter {
 		viewHolder.txtName.setText(cursor.getString(cursor
 				.getColumnIndex(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)));
 		// TODO 设置文件夹内文件数量
-		viewHolder.txtNum.setText("共"
-				+ cursor.getString(cursor.getColumnIndex("num")) + "张");
+		viewHolder.txtNum.setText("("
+				+ cursor.getString(cursor.getColumnIndex("num")) + ")");
 	}
 
 	@Override
