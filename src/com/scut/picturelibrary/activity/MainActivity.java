@@ -22,7 +22,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
-import com.scut.picturelibrary.adapter.PhotoWallAdapter;
+import com.scut.picturelibrary.adapter.MediaFilesAdapter;
 import com.scut.picturelibrary.loader.ImageVideoCursorLoader;
 
 /**
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements
 	/**
 	 * GridView的适配器
 	 */
-	private PhotoWallAdapter mAdapter;
+	private MediaFilesAdapter mAdapter;
 
 	private String mSort = MediaStore.Images.Media.DISPLAY_NAME;
 
@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity implements
 		setContentView(R.layout.activity_main);
 		mGridView = (GridView) findViewById(R.id.grid_main_photowall);
 		// mAdapter = new GridViewAdapter(this, null, mGridView);
-		mAdapter = new PhotoWallAdapter(this, null);
+		mAdapter = new MediaFilesAdapter(this, null);
 		// 设置图片显示选项
 		DisplayImageOptions displayOp = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.bg_loading)// 图片正在加载时显示的背景

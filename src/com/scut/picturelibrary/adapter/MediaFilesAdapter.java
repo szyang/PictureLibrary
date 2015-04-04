@@ -18,13 +18,23 @@ import com.scut.picturelibrary.R;
  * @author 黄建斌
  * 
  */
-public class PhotoWallAdapter extends CursorAdapter {
+public class MediaFilesAdapter extends CursorAdapter {
 
 	@SuppressWarnings("unused")
-	private static final String TAG = "PhotoWallAdapter";
+	private static final String TAG = "MediaFilesAdapter";
+	private int mImageHoverResource = 0;
+	private int mVideoHoverResource = R.drawable.ic_play;
 
-	public PhotoWallAdapter(Context context, Cursor c) {
+	public MediaFilesAdapter(Context context, Cursor c) {
 		super(context, c, true);
+	}
+
+	public void setImageHoverResource(int id) {
+		mImageHoverResource = id;
+	}
+
+	public void setVideoHoverResource(int id) {
+		mVideoHoverResource = id;
 	}
 
 	@Override
@@ -33,7 +43,7 @@ public class PhotoWallAdapter extends CursorAdapter {
 			return;
 		final String path = cursor.getString(cursor
 				.getColumnIndex(MediaStore.Images.Media.DATA));
-		ImageView photo = (ImageView) v.getTag();
+		ViewHolder viewHolder = (ViewHolder) v.getTag();
 		// 使用外部库ImageLoader进行图片缓存和异步加载显示
 		int typeIndex = cursor.getColumnIndex("type");
 		if (typeIndex >= 0 && cursor.getString(typeIndex).equals("video")) {
@@ -41,10 +51,14 @@ public class PhotoWallAdapter extends CursorAdapter {
 					.getColumnIndex(MediaStore.Video.Media._ID));
 			// 视频格式的略缩图
 			ImageLoader.getInstance().displayImage(
-					"content://media/external/video/media/" + id, photo);
+					"content://media/external/video/media/" + id,
+					viewHolder.imgThumbnail);
+			viewHolder.imgHover.setImageResource(mVideoHoverResource);
 		} else {
 			// 图片略缩图
-			ImageLoader.getInstance().displayImage("file:///" + path, photo);
+			ImageLoader.getInstance().displayImage("file:///" + path,
+					viewHolder.imgThumbnail);
+			viewHolder.imgHover.setImageResource(mImageHoverResource);
 		}
 	}
 
@@ -53,7 +67,12 @@ public class PhotoWallAdapter extends CursorAdapter {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(R.layout.grid_item, parent, false);
 		ImageView photo = (ImageView) v.findViewById(R.id.img_grid_item_photo);
-		v.setTag(photo);
+		ImageView hover = (ImageView) v.findViewById(R.id.img_grid_item_hover);
+		ViewHolder viewHolder = new ViewHolder();
+		viewHolder.imgThumbnail = photo;
+		viewHolder.imgHover = hover;
+		// 设置Tag
+		v.setTag(viewHolder);
 		return v;
 	}
 
@@ -73,5 +92,16 @@ public class PhotoWallAdapter extends CursorAdapter {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex("type"));
+	}
+
+	/**
+	 * 静态类 防止内存泄漏
+	 * 
+	 * @author 黄建斌
+	 * 
+	 */
+	static class ViewHolder {
+		ImageView imgThumbnail;
+		ImageView imgHover;
 	}
 }
