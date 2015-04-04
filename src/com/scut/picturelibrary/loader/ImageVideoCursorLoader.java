@@ -4,13 +4,13 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-import com.scut.picturelibrary.utils.SortCursor;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
+
+import com.scut.picturelibrary.utils.SortCursor;
 
 public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
 	final ForceLoadContentObserver mObserver;
@@ -37,12 +37,8 @@ public class ImageVideoCursorLoader extends AsyncTaskLoader<Cursor> {
 		Cursor videoCursor = getContext().getContentResolver().query(
 				MediaStore.Video.Media.EXTERNAL_CONTENT_URI, mVideoProjection,
 				mSelection, mSelectionArgs, null);
-		if (null != imageCursor || null != videoCursor) {
-			// cursor = new MergeCursor(new Cursor[] { videoCursor, imageCursor
-			// });
-			cursor = new SortCursor(new Cursor[] { videoCursor, imageCursor },
-					mSortOrder);
-		}
+		cursor = new SortCursor(new Cursor[] { videoCursor, imageCursor },
+				mSortOrder);
 		if (cursor != null) {
 			// Ensure the cursor window is filled
 			cursor.getCount();
