@@ -1,5 +1,6 @@
 package com.scut.picturelibrary.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -20,6 +22,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.MediaFilesAdapter;
 import com.scut.picturelibrary.loader.MediaFilesCursorLoader;
+import com.scut.picturelibrary.views.DialogManager;
 
 /**
  * 显示某文件夹下所有图片视频文件
@@ -86,7 +89,43 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				startActivity(it);
 			}
 		});
+		mGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (mAdapter.getType(position).equals("video")) {// 视频
+				} else { // 图片
+					final String path = mAdapter.getPath(position);
+					DialogManager.showImageItemMenuDialog(
+							MediaFilesActivity.this,
+							mAdapter.getTitle(position),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									switch (which) {
+									case 0:
+										Intent intent = new Intent();
+										intent.setClass(
+												MediaFilesActivity.this,
+												RecognizeImageActivity.class);
+										intent.putExtra("path", path);
+										MediaFilesActivity.this
+												.startActivity(intent);
+										break;
+
+									default:
+										break;
+									}
+
+								}
+							});
+				}
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -125,6 +164,11 @@ public class MediaFilesActivity extends ActionBarActivity implements
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
 	}
 
 	@Override

@@ -96,6 +96,13 @@ public class MediaFilesAdapter extends CursorAdapter {
 		return c.getString(c.getColumnIndex("type"));
 	}
 
+	public String getTitle(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		return c.getString(c
+				.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
+	}
+
 	/**
 	 * 静态类 防止内存泄漏
 	 * 
