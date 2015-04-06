@@ -3,9 +3,9 @@ package com.scut.picturelibrary.activity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -18,9 +18,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -53,6 +52,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 	String mInsameUrl;
 	int mSize;
 
+	Set<GetWorkerTask> taskCollection;
 	UploadedFileTableUtil mUploadedTable;
 	SimiAdapter mAdapter;
 
@@ -72,6 +72,8 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mFileName = intent.getStringExtra("filename");
 
 		Bmob.initialize(this, "ee96600c38da5fe2c41328c00b90e2a1");
+
+		taskCollection = new HashSet<GetWorkerTask>();
 
 		mSameImagesLayout = (LinearLayout) findViewById(R.id.ll_recognize_insame_images);
 		mSameImagesTitleTextView = (TextView) findViewById(R.id.txt_recognize_insame_title);
@@ -101,6 +103,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		DialogManager.dismissDialog();
+		cancelAllTasks();
 	}
 
 	private void displayDownloadedSameImages(JSONObject response) {
@@ -128,7 +131,6 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		JSONArray jsonarray;
 		try {
 			jsonarray = response.getJSONArray("data");
-			Log.d(TAG, "jsonarray simi" + jsonarray.toString());
 			if (jsonarray.toString().equals("[{}]")) {
 				mSimiImagesTitleTextView.setText("未找到相似图片");
 			}
@@ -217,87 +219,81 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mInsameUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=3&pn=0&ct=1&stt=1&tn=insamejson&ie=utf-8&objurl="
 				+ uploadFileUrl;
 		DialogManager.dismissDialog();
-		httpGet(mInsameUrl, INSAME, new OnHttpEndListener() {
-			@Override
-			public void onHttpEnd(JSONObject json) {
-				// List<String> keyworlds = KeyWordsAnalizer
-				// .getKeywords(getResponseAllTitle(json));
-				// if (keyworlds != null) {
-				// Message msg = new Message();
-				// msg.what = KEYWORDS;
-				// msg.obj = keyworlds;
-				// mHandler.sendMessage(msg);
-				// }
-			}
-		});
-		httpGet(mInsimiUrl, INSIMI, null);
+		GetWorkerTask simitask = new GetWorkerTask();
+		taskCollection.add(simitask);
+		simitask.execute(INSIMI, mInsimiUrl);
+		GetWorkerTask sametask = new GetWorkerTask();
+		taskCollection.add(sametask);
+		sametask.execute(INSAME, mInsameUrl);
 	}
 
-	private static final int INSIMI = 0x15040500;
-	private static final int INSAME = 0x15040501;
-	private static final int KEYWORDS = 0x15040502;
-	RecognizeHandler mHandler = new RecognizeHandler(this);
-
-	static class RecognizeHandler extends Handler {
-		WeakReference<RecognizeImageActivity> context;
-
-		public RecognizeHandler(RecognizeImageActivity ac) {
-			context = new WeakReference<RecognizeImageActivity>(ac);
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.what == INSIMI) {
-				context.get().displayDownloadedSimiImages((JSONObject) msg.obj);
-			}
-			if (msg.what == INSAME) {
-				context.get().displayDownloadedSameImages((JSONObject) msg.obj);
-			}
-			if (msg.what == KEYWORDS) {
-				List<String> keyworlds = (List<String>) msg.obj;
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i < keyworlds.size(); i++) {
-					sb.append(keyworlds.get(i) + " ");
-				}
-				context.get().mGuessTextView.setText("您的图片可能与下面内容有关：\n\n  "
-						+ sb.toString());
+	public void cancelAllTasks() {
+		if (taskCollection != null) {
+			for (GetWorkerTask task : taskCollection) {
+				task.cancel(false);
 			}
 		}
 	}
+
+	private static final String INSIMI = "insimi";
+	private static final String INSAME = "insame";
+	private static final String KEYWORDS = "keywords";
 
 	public interface OnHttpEndListener {
 		public void onHttpEnd(JSONObject json);
 	}
 
-	private void httpGet(final String url, final int what,
-			final OnHttpEndListener listener) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				HttpGet request = new HttpGet(url);
-				HttpClient client = new DefaultHttpClient();
-				org.apache.http.HttpResponse response;
-				try {
-					response = client.execute(request);
-					HttpEntity entity = response.getEntity();
-					String result = EntityUtils.toString(entity, "GBK");
-					JSONObject json = new JSONObject(result);
-					if (listener != null) {
-						listener.onHttpEnd(json);
-					}
-					Message msg = new Message();
-					msg.what = what;
-					msg.obj = json;
-					mHandler.sendMessage(msg);
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-				}
+	class GetWorkerTask extends AsyncTask<String, Void, JSONObject> {
 
+		// params what url
+		@Override
+		protected JSONObject doInBackground(String... params) {
+			HttpGet request = new HttpGet(params[1]);
+			HttpClient client = new DefaultHttpClient();
+			org.apache.http.HttpResponse response;
+			try {
+				response = client.execute(request);
+				HttpEntity entity = response.getEntity();
+				String result = EntityUtils.toString(entity, "GBK");
+				JSONObject json = new JSONObject(result);
+				json.put("what", params[0]);
+				return json;
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 			}
-		}).start();
+			return null;
+		}
 
+		@Override
+		protected void onPostExecute(JSONObject result) {
+			super.onPostExecute(result);
+			if (result != null) {
+				try {
+					String what = result.get("what").toString();
+					if (what.equals(INSIMI)) {
+						displayDownloadedSimiImages(result);
+					}
+					if (what.equals(INSAME)) {
+						displayDownloadedSameImages(result);
+					}
+					if (what.equals(KEYWORDS)) {
+						// List<String> keyworlds = (List<String>) msg.obj;
+						// StringBuffer sb = new StringBuffer();
+						// for (int i = 0; i < keyworlds.size(); i++) {
+						// sb.append(keyworlds.get(i) + " ");
+						// }
+						// context.get().mGuessTextView.setText("您的图片可能与下面内容有关：\n\n  "
+						// + sb.toString());
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			taskCollection.remove(this);
+		}
 	}
+
 }
