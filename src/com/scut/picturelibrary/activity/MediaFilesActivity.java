@@ -97,9 +97,10 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				if (mAdapter.getType(position).equals("video")) {// 视频
 				} else { // 图片
 					final String path = mAdapter.getPath(position);
+					final String filename = mAdapter.getTitle(position);
 					DialogManager.showImageItemMenuDialog(
 							MediaFilesActivity.this,
-							mAdapter.getTitle(position),
+							filename,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -112,6 +113,7 @@ public class MediaFilesActivity extends ActionBarActivity implements
 												MediaFilesActivity.this,
 												RecognizeImageActivity.class);
 										intent.putExtra("path", path);
+										intent.putExtra("filename", filename);
 										MediaFilesActivity.this
 												.startActivity(intent);
 										break;

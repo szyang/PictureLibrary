@@ -1,6 +1,7 @@
 package com.scut.picturelibrary.activity;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import cn.bmob.v3.listener.UploadFileListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.SimiAdapter;
+import com.scut.picturelibrary.database.UploadedFileTableUtil;
 import com.scut.picturelibrary.views.DialogManager;
 import com.scut.picturelibrary.views.NoScrollGridView;
 
@@ -44,12 +46,14 @@ import com.scut.picturelibrary.views.NoScrollGridView;
  */
 public class RecognizeImageActivity extends ActionBarActivity {
 	private static final String TAG = "RecognizeImageActivity";
-	String sourcePath;
-	String uploadFileUrl;
-	String insimiUrl;
-	String insameUrl;
-	// RequestQueue mQueue;
+	String mFileName;
+	String mSourcePath;
+	String mUploadFileUrl;
+	String mInsimiUrl;
+	String mInsameUrl;
+	int mSize;
 
+	UploadedFileTableUtil mUploadedTable;
 	SimiAdapter mAdapter;
 
 	NoScrollGridView mSimiGridView;
@@ -64,10 +68,10 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recognize);
 		Intent intent = getIntent();
-		sourcePath = intent.getStringExtra("path");
+		mSourcePath = intent.getStringExtra("path");
+		mFileName = intent.getStringExtra("filename");
 
 		Bmob.initialize(this, "ee96600c38da5fe2c41328c00b90e2a1");
-		// mQueue = Volley.newRequestQueue(this);
 
 		mSameImagesLayout = (LinearLayout) findViewById(R.id.ll_recognize_insame_images);
 		mSameImagesTitleTextView = (TextView) findViewById(R.id.txt_recognize_insame_title);
@@ -75,20 +79,22 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mGuessTextView = (TextView) findViewById(R.id.txt_recognize_guess);
 		mSourceImage = (ImageView) findViewById(R.id.img_recognize_source);
 		mSimiGridView = (NoScrollGridView) findViewById(R.id.grid_recognize_insimi);
+
+		mUploadedTable = new UploadedFileTableUtil(this);
 		mAdapter = new SimiAdapter(this, R.layout.grid_files_item,
 				R.id.img_grid_files_item_photo, new ArrayList<String>());
+
 		mSimiGridView.setAdapter(mAdapter);
 
-		ImageLoader.getInstance().displayImage("file://" + sourcePath,
+		ImageLoader.getInstance().displayImage("file://" + mSourcePath,
 				mSourceImage);
 
-		uploadImage(sourcePath);
+		uploadImage(mSourcePath, mFileName);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		// mQueue.cancelAll(this);
 	}
 
 	@Override
@@ -101,7 +107,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		JSONArray jsonarray;
 		try {
 			jsonarray = response.getJSONArray("data");
-			if (jsonarray.length() == 0) {
+			if (jsonarray.toString().equals("[{}]")) {
 				mSameImagesTitleTextView.setText("未找到相同图片");
 			}
 			for (int i = 0; i < jsonarray.length(); i++) {
@@ -122,7 +128,8 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		JSONArray jsonarray;
 		try {
 			jsonarray = response.getJSONArray("data");
-			if (jsonarray.length() == 0) {
+			Log.d(TAG, "jsonarray simi" + jsonarray.toString());
+			if (jsonarray.toString().equals("[{}]")) {
 				mSimiImagesTitleTextView.setText("未找到相似图片");
 			}
 			for (int i = 0; i < jsonarray.length(); i++) {
@@ -136,60 +143,58 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 	}
 
-	private List<String> getResponseAllTitle(JSONObject response) {
-		List<String> result = new ArrayList<String>();
-		JSONArray jsonarray;
+	// private List<String> getResponseAllTitle(JSONObject response) {
+	// List<String> result = new ArrayList<String>();
+	// JSONArray jsonarray;
+	// try {
+	// jsonarray = response.getJSONArray("data");
+	// Log.d(TAG, jsonarray.toString());
+	// for (int i = 0; i < jsonarray.length(); i++) {
+	// String fromPageTitleEnc = ((JSONObject) jsonarray.get(i)).get(
+	// "fromPageTitleEnc").toString();
+	// result.add(fromPageTitleEnc);
+	// }
+	// } catch (JSONException e) {
+	// e.printStackTrace();
+	// }
+	// return result;
+	// }
+
+	private void uploadImage(String path, String filename) {
+		File file = new File(path);
+		final BmobFile bmobFile = new BmobFile(file);
+		FileInputStream fis = null;
+		String url = null;
 		try {
-			jsonarray = response.getJSONArray("data");
-			Log.d(TAG, jsonarray.toString());
-			for (int i = 0; i < jsonarray.length(); i++) {
-				String fromPageTitleEnc = ((JSONObject) jsonarray.get(i)).get(
-						"fromPageTitleEnc").toString();
-				result.add(fromPageTitleEnc);
-			}
-		} catch (JSONException e) {
+			fis = new FileInputStream(file);
+			mSize = fis.available();
+			url = mUploadedTable.hasUploaded(filename, mSize);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
-	}
-
-	private void uploadImage(String path) {
-		final BmobFile bmobFile = new BmobFile(new File(path));
+		Log.d(TAG, "file size is: " + mSize);
 		DialogManager.showProgressDialog(RecognizeImageActivity.this, null);
+		if (url != null) {// 已经上传过了
+			mUploadFileUrl = url;
+			getSimiSameImage(mUploadFileUrl);
+			return;
+		}
+		// 未上传过，进行上传
 		bmobFile.uploadblock(this, new UploadFileListener() {
 
 			@Override
 			public void onSuccess() {
-				uploadFileUrl = bmobFile
-						.getFileUrl(RecognizeImageActivity.this);
-				// 返回最多9张类似图片
-				insimiUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=8&pn=0&ct=1&stt=1&tn=insimijson&ie=utf-8&objurl="
-						+ uploadFileUrl;
-				// 返回最多3个相同图片
-				insameUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=2&pn=0&ct=1&stt=1&tn=insamejson&ie=utf-8&objurl="
-						+ uploadFileUrl;
-				DialogManager.dismissDialog();
 				Toast.makeText(RecognizeImageActivity.this, "上传成功",
 						Toast.LENGTH_LONG).show();
-				httpGet(insameUrl, INSAME, new OnHttpEndListener() {
-					@Override
-					public void onHttpEnd(JSONObject json) {
-						// List<String> keyworlds = KeyWordsAnalizer
-						// .getKeywords(getResponseAllTitle(json));
-						// if (keyworlds != null) {
-						// Message msg = new Message();
-						// msg.what = KEYWORDS;
-						// msg.obj = keyworlds;
-						// mHandler.sendMessage(msg);
-						// }
-					}
-				});
-				httpGet(insimiUrl, INSIMI, null);
+				mUploadFileUrl = bmobFile
+						.getFileUrl(RecognizeImageActivity.this);
+				// 上传结束，存入数据库
+				mUploadedTable.insert(mFileName, mSize, mUploadFileUrl);
+				getSimiSameImage(mUploadFileUrl);
 			}
 
 			@Override
 			public void onProgress(Integer value) {
-				Log.d(TAG, "uploading..." + value);
 				if (DialogManager.getProgressDialog() != null) {
 					DialogManager.getProgressDialog().setProgress(value);
 				}
@@ -202,6 +207,30 @@ public class RecognizeImageActivity extends ActionBarActivity {
 						Toast.LENGTH_LONG).show();
 			}
 		});
+	}
+
+	private void getSimiSameImage(String uploadFileUrl) {
+		// 返回最多9张类似图片
+		mInsimiUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=9&pn=0&ct=1&stt=1&tn=insimijson&ie=utf-8&objurl="
+				+ uploadFileUrl;
+		// 返回最多3个相同图片
+		mInsameUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=3&pn=0&ct=1&stt=1&tn=insamejson&ie=utf-8&objurl="
+				+ uploadFileUrl;
+		DialogManager.dismissDialog();
+		httpGet(mInsameUrl, INSAME, new OnHttpEndListener() {
+			@Override
+			public void onHttpEnd(JSONObject json) {
+				// List<String> keyworlds = KeyWordsAnalizer
+				// .getKeywords(getResponseAllTitle(json));
+				// if (keyworlds != null) {
+				// Message msg = new Message();
+				// msg.what = KEYWORDS;
+				// msg.obj = keyworlds;
+				// mHandler.sendMessage(msg);
+				// }
+			}
+		});
+		httpGet(mInsimiUrl, INSIMI, null);
 	}
 
 	private static final int INSIMI = 0x15040500;
