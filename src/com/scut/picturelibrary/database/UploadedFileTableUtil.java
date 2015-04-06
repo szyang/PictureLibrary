@@ -5,6 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * 上传过的文件记录表 上传后的文件信息保存在此 主要通过filename和size判断是否是同一个文件
+ * 
+ * @author 黄建斌
+ * 
+ */
 public class UploadedFileTableUtil {
 	private static final String TABLE_NAME = "uploadedFilesTable";
 	private static final String _ID = "id";
