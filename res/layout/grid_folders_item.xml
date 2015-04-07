@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="130dp"
+    android:layout_height="170dp" >
+
+    <RelativeLayout
+        android:id="@+id/rl_grid_folders_item_pic"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:background="@drawable/bg_folder"
+        android:padding="15dp" >
+
+        <ImageView
+            android:id="@+id/img_grid_folders_item_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/grid_item_description"
+            android:scaleType="centerCrop" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txt_grid_folders_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/rl_grid_folders_item_pic"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:maxWidth="75dp"
+        android:singleLine="true"
+        android:textColor="#222222"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/txt_grid_folders_item_num"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/txt_grid_folders_item_name"
+        android:layout_below="@id/rl_grid_folders_item_pic"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/txt_grid_folders_item_name"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#222222"
+        android:textSize="12sp" />
+
+</RelativeLayout>

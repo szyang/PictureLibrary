@@ -1,12 +1,12 @@
 package com.scut.picturelibrary.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -14,75 +14,118 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
-import com.scut.picturelibrary.adapter.PhotoWallAdapter;
+import com.scut.picturelibrary.adapter.MediaFilesAdapter;
+import com.scut.picturelibrary.loader.MediaFilesCursorLoader;
+import com.scut.picturelibrary.views.DialogManager;
 
 /**
- * 主Activity，显示所有图片文件夹 目前显示所有图片 使用Loader进行Cursor的异步查询和管理
+ * 显示某文件夹下所有图片视频文件
  * 
  * @author 黄建斌
+ * 
  */
-public class MainActivity extends ActionBarActivity implements
+public class MediaFilesActivity extends ActionBarActivity implements
 		LoaderCallbacks<Cursor> {
 	/**
-	 * 用于展示照片墙的GridView
+	 * 用于展示文件夹的GridView
 	 */
 	private GridView mGridView;
-	private final int LOAD_ID = 0x20150330;
+	private final int LOAD_ID = 0x20150405;
 
 	/**
 	 * GridView的适配器
 	 */
-	private PhotoWallAdapter mAdapter;
+	private MediaFilesAdapter mAdapter;
 
-	private String mSort = MediaStore.MediaColumns.TITLE;
+	private final String SORT_BY_NAME = MediaStore.Images.Media.DISPLAY_NAME;
+	private final String SORT_BY_DATE = MediaStore.Images.Media.DATE_MODIFIED;
+
+	private String mSort = SORT_BY_NAME;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		mGridView = (GridView) findViewById(R.id.grid_main_photowall);
-		// mAdapter = new GridViewAdapter(this, null, mGridView);
-		mAdapter = new PhotoWallAdapter(this, null);
-		// 设置图片显示选项
-		DisplayImageOptions displayOp = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.bg_loading)// 图片正在加载时显示的背景
-				.cacheInMemory(true)// 缓存在内存中
-				.cacheOnDisk(true)// 缓存在磁盘中
-				.displayer(new FadeInBitmapDisplayer(400))// 显示渐变动画
-				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED)// 按ImageView的scaleType进行压缩
-				.build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).defaultDisplayImageOptions(displayOp).build();
-		ImageLoader.getInstance().init(config);
-
-		mGridView.setAdapter(mAdapter);
+		setContentView(R.layout.activity_files);
 		// 进行cursorloader初始化
 		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
+		// 初始化视图
+		initView();
+		// 设置监听器
+		initListener();
+	}
+
+	private void initView() {
+		mGridView = (GridView) findViewById(R.id.grid_files);
+		mAdapter = new MediaFilesAdapter(this, null);
+		mGridView.setAdapter(mAdapter);
+	}
+
+	private void initListener() {
 		// 设置滚动时图片是否暂停加载的监听
 		PauseOnScrollListener listener = new PauseOnScrollListener(
-				ImageLoader.getInstance(), false, false);
+				ImageLoader.getInstance(), false, true);
 		mGridView.setOnScrollListener(listener);
-		// TODO 点击显示图片
-		// 目前是调用外部程序
 		mGridView.setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				// TODO 点击显示完整图片or播放视频
+				// 目前是调用外部程序
 				String path = mAdapter.getPath(position);
 				Intent it = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse("file:///" + path);
-				it.setDataAndType(uri, "image/*");
+
+				if (mAdapter.getType(position).equals("video"))// 视频
+					it.setDataAndType(uri, "video/*");
+				else { // 图片
+					it.setDataAndType(uri, "image/*");
+				}
 				startActivity(it);
+			}
+		});
+		mGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (mAdapter.getType(position).equals("video")) {// 视频
+				} else { // 图片
+					final String path = mAdapter.getPath(position);
+					final String filename = mAdapter.getTitle(position);
+					DialogManager.showImageItemMenuDialog(
+							MediaFilesActivity.this,
+							filename,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									switch (which) {
+									case 0:
+										Intent intent = new Intent();
+										intent.setClass(
+												MediaFilesActivity.this,
+												RecognizeImageActivity.class);
+										intent.putExtra("path", path);
+										intent.putExtra("filename", filename);
+										MediaFilesActivity.this
+												.startActivity(intent);
+										break;
+
+									default:
+										break;
+									}
+
+								}
+							});
+				}
+				return false;
 			}
 		});
 	}
@@ -98,9 +141,9 @@ public class MainActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		switch (id) {// 根据选项进行排序
 		case R.id.action_sort_name:
-			return resort(MediaStore.MediaColumns.TITLE);
+			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
-			return resort("-" + MediaStore.MediaColumns.DATE_MODIFIED);
+			return resort(SORT_BY_DATE);
 		default:
 			break;
 		}
@@ -126,26 +169,27 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		// 退出程序时结束所有的加载任务
-		// mAdapter.cancelAllTasks();
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle arg1) {
-		// 创建目标cursor
-		String[] projection = new String[] { MediaStore.Images.Media._ID,
-				MediaStore.Images.Media.BUCKET_ID, // 直接包含该图片文件的文件夹ID，防止在不同下的文件夹重名
+		String bucketId = getIntent().getStringExtra("bucketId");
+		// 创建目标cursor，显示文件夹下图片视频文件
+		return new MediaFilesCursorLoader(this, new String[] {
+				MediaStore.Images.Media._ID,// 文件ID
+				MediaStore.Images.Media.BUCKET_ID, // 文件夹ID
 				MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
+				MediaStore.Images.Media.DATE_MODIFIED,// 修改日期
 				MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
-				MediaStore.Images.Thumbnails.DATA,// 略缩图路径
 				MediaStore.Images.Media.DATA // 图片绝对路径
-		};
-		// mAdapter.setFirstEnter(true);
-		return new CursorLoader(this,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
-				null, mSort);
+				}, "bucket_id = " + bucketId, null, mSort);
 	}
 
 	@Override

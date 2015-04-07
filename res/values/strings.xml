@@ -7,5 +7,8 @@
     <string name="sort_name">按名称排序</string>
     <string name="grid_item_description">grid</string>
     <string name="sort_date">按修改日期排序</string>
+    <string name="reco_image">识图</string>
+    <string name="same_image">相同图片</string>
+    <string name="simi_image">相似图片</string>
 
 </resources>
