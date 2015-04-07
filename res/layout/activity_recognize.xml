@@ -10,6 +10,8 @@
             android:id="@+id/img_recognize_source"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/reco_image"
             android:src="@drawable/ic_launcher" />
 
         <TextView
@@ -20,7 +22,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/img_recognize_source"
-            android:padding="15dp" />
+            android:padding="10dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -37,8 +39,10 @@
                     android:id="@+id/txt_recognize_insame_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="相同图片"
+                    android:background="#ffffff"
+                    android:contentDescription="@string/reco_image"
+                    android:padding="10dp"
+                    android:text="@string/same_image"
                     android:textSize="20sp" />
 
                 <LinearLayout
@@ -51,21 +55,30 @@
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:contentDescription="@string/reco_image"
                         android:maxHeight="100dp"
                         android:scaleType="centerCrop" />
 
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:contentDescription="@string/reco_image"
                         android:maxHeight="100dp"
                         android:scaleType="centerCrop" />
 
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:contentDescription="@string/reco_image"
                         android:maxHeight="100dp"
                         android:scaleType="centerCrop" />
                 </LinearLayout>
@@ -81,8 +94,9 @@
                     android:id="@+id/txt_recognize_insimi_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="相似图片"
+                    android:background="#ffffff"
+                    android:padding="10dp"
+                    android:text="@string/simi_image"
                     android:textSize="20sp" />
 
                 <com.scut.picturelibrary.views.NoScrollGridView
@@ -90,7 +104,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_recognize_insimi_title"
-                    android:numColumns="3" />
+                    android:clipToPadding="false"
+                    android:gravity="center"
+                    android:numColumns="3"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:verticalSpacing="10dp" />
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

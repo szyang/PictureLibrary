@@ -3,15 +3,21 @@ package com.scut.picturelibrary.activity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +27,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,6 +49,7 @@ import com.scut.picturelibrary.views.NoScrollGridView;
  * 
  */
 public class RecognizeImageActivity extends ActionBarActivity {
+	@SuppressWarnings("unused")
 	private static final String TAG = "RecognizeImageActivity";
 	String mFileName;
 	String mSourcePath;
@@ -145,23 +151,6 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 	}
 
-	// private List<String> getResponseAllTitle(JSONObject response) {
-	// List<String> result = new ArrayList<String>();
-	// JSONArray jsonarray;
-	// try {
-	// jsonarray = response.getJSONArray("data");
-	// Log.d(TAG, jsonarray.toString());
-	// for (int i = 0; i < jsonarray.length(); i++) {
-	// String fromPageTitleEnc = ((JSONObject) jsonarray.get(i)).get(
-	// "fromPageTitleEnc").toString();
-	// result.add(fromPageTitleEnc);
-	// }
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// return result;
-	// }
-
 	private void uploadImage(String path, String filename) {
 		File file = new File(path);
 		final BmobFile bmobFile = new BmobFile(file);
@@ -174,7 +163,6 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Log.d(TAG, "file size is: " + mSize);
 		DialogManager.showProgressDialog(RecognizeImageActivity.this, null);
 		if (url != null) {// 已经上传过了
 			mUploadFileUrl = url;
@@ -237,10 +225,42 @@ public class RecognizeImageActivity extends ActionBarActivity {
 
 	private static final String INSIMI = "insimi";
 	private static final String INSAME = "insame";
-	private static final String KEYWORDS = "keywords";
+	private String mLocationQuery;
+	private String mKeyword;
 
-	public interface OnHttpEndListener {
-		public void onHttpEnd(JSONObject json);
+	public URI getLocationURI(HttpResponse response) {
+		Header[] headers = response.getAllHeaders();
+		String locationName = "Location";
+		URI locationUrl = null;
+		String location = null;
+		for (int i = 0; i < headers.length; i++) {
+			String name = headers[i].getName();
+			if (name.equals(locationName)) {
+				location = headers[i].getValue();
+				break;
+			}
+		}
+		if (location != null) {
+			try {
+				locationUrl = new URI(location);
+				mLocationQuery = locationUrl.getQuery();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		return locationUrl;
+	}
+
+	public String getQueryString(String url, String name) {
+		String[] params = url.split("&");
+		for (int i = 0; i < params.length; i++) {
+			if (params[i].startsWith(name)) {
+				String[] values = params[i].split("=");
+				if (values.length > 1)
+					return params[i].split("=")[1];
+			}
+		}
+		return null;
 	}
 
 	class GetWorkerTask extends AsyncTask<String, Void, JSONObject> {
@@ -249,27 +269,44 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		@Override
 		protected JSONObject doInBackground(String... params) {
 			HttpGet request = new HttpGet(params[1]);
-			HttpClient client = new DefaultHttpClient();
+			DefaultHttpClient client = new DefaultHttpClient();
+			client.setRedirectHandler(new RedirectHandler() {
+				@Override
+				public boolean isRedirectRequested(HttpResponse response,
+						HttpContext context) {
+					return RecognizeImageActivity.this.getLocationURI(response) != null;
+				}
+
+				@Override
+				public URI getLocationURI(HttpResponse response,
+						HttpContext context) throws ProtocolException {
+					return RecognizeImageActivity.this.getLocationURI(response);
+				}
+			});
 			org.apache.http.HttpResponse response;
+			JSONObject json = null;
 			try {
 				response = client.execute(request);
 				HttpEntity entity = response.getEntity();
 				String result = EntityUtils.toString(entity, "GBK");
-				JSONObject json = new JSONObject(result);
+				if (params[0].equals(INSAME)) {
+					mKeyword = getQueryString(mLocationQuery, "keyword");
+				}
+				json = new JSONObject(result);
 				json.put("what", params[0]);
-				return json;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
+			} finally {
+				request.abort();
 			}
-			return null;
+			return json;
 		}
 
 		@Override
 		protected void onPostExecute(JSONObject result) {
-			super.onPostExecute(result);
 			if (result != null) {
 				try {
 					String what = result.get("what").toString();
@@ -278,15 +315,10 @@ public class RecognizeImageActivity extends ActionBarActivity {
 					}
 					if (what.equals(INSAME)) {
 						displayDownloadedSameImages(result);
-					}
-					if (what.equals(KEYWORDS)) {
-						// List<String> keyworlds = (List<String>) msg.obj;
-						// StringBuffer sb = new StringBuffer();
-						// for (int i = 0; i < keyworlds.size(); i++) {
-						// sb.append(keyworlds.get(i) + " ");
-						// }
-						// context.get().mGuessTextView.setText("您的图片可能与下面内容有关：\n\n  "
-						// + sb.toString());
+						if (mKeyword != null && mKeyword.length() > 0)
+							mGuessTextView.setText("您要找的可能是:\n\n  " + mKeyword);
+						else
+							mGuessTextView.setText("找不到关键字");
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -295,5 +327,4 @@ public class RecognizeImageActivity extends ActionBarActivity {
 			taskCollection.remove(this);
 		}
 	}
-
 }

@@ -46,6 +46,7 @@ public class UploadedFileTableUtil {
 			url = cursor.getString(cursor.getColumnIndex(URL));
 		}
 		cursor.close();
+		db.close();
 		return url;
 	}
 }

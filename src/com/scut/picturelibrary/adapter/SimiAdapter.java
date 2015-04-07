@@ -2,13 +2,13 @@ package com.scut.picturelibrary.adapter;
 
 import java.util.List;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * 识图中类似图片Gridview的Adapter

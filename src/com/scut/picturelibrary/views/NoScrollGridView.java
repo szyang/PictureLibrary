@@ -1,13 +1,13 @@
 package com.scut.picturelibrary.views;
 
 import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.GridView;
 /**
  * 不可检测自身滚动的GridView 放在ScrollView下时使用，防止滚动检测冲突
  * 
  * @author 黄建斌
  */
-import android.util.AttributeSet;
-import android.widget.GridView;
 
 public class NoScrollGridView extends GridView {
 
