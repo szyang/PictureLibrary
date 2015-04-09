@@ -28,3 +28,6 @@ proguard/
 
 #source link path
 libs/android-support-v4.jar.properties
+
+#MAC File Info
+.DS_Store
