@@ -80,13 +80,18 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				String path = mAdapter.getPath(position);
 				Intent it = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse("file:///" + path);
-
-				if (mAdapter.getType(position).equals("video"))// 视频
-					it.setDataAndType(uri, "video/*");
+                
+				if (mAdapter.getType(position).equals("video")) {// 视频
+					Intent intent = new Intent();
+					intent.setClass(MediaFilesActivity.this, VideoActivity.class);
+					intent.putExtra("filePath", path);
+					startActivity(intent);
+				}
 				else { // 图片
 					it.setDataAndType(uri, "image/*");
+					startActivity(it);
 				}
-				startActivity(it);
+				
 			}
 		});
 		mGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
