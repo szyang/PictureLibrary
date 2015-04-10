@@ -1,6 +1,8 @@
 package com.scut.picturelibrary.activity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -90,7 +92,8 @@ public class RecognizeImageActivity extends ActionBarActivity {
 
 		setTitle(mFileName);
 
-		Bmob.initialize(this, "ee96600c38da5fe2c41328c00b90e2a1");
+		Bmob.initialize(getApplicationContext(),
+				"ee96600c38da5fe2c41328c00b90e2a1");
 
 		taskCollection = new HashSet<GetWorkerTask>();
 
@@ -199,7 +202,16 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		File file = new File(path);
 		String url = null;
 		// 获取文件大小
-		mSize = file.length();
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+			mSize = fis.available();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// mSize = file.length();
 		// 尝试从数据库中获取上传后的图片url
 		url = mUploadedTable.hasUploaded(filename, mSize);
 		DialogManager.showProgressDialog(RecognizeImageActivity.this, null);
