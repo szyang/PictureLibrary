@@ -41,10 +41,12 @@ public class DialogManager {
 		// 设置ProgressDialog 的进度条是否不明确
 		mProgressDialog.setIndeterminate(false);
 		// 设置ProgressDialog 是否可以按退回按键取消
-		mProgressDialog.setCancelable(true);
+		mProgressDialog.setCancelable(false);
 		// 设置ProgressDialog 的一个Button
-		if (cancelListener != null)
+		if (cancelListener != null) {
+			mProgressDialog.setCancelable(true);
 			mProgressDialog.setButton(0, "取消", cancelListener);
+		}
 		// 让ProgressDialog显示
 		mProgressDialog.show();
 	}
@@ -60,8 +62,11 @@ public class DialogManager {
 				ctx);
 		builder.setTitle(title);
 		builder.setMessage(message);
-		if (onCancelListener != null)
+		builder.setCancelable(false);
+		if (onCancelListener != null) {
+			builder.setCancelable(true);
 			builder.setOnCancelListener(onCancelListener);
+		}
 		// 创建一个列表对话框
 		mDialog = builder.create();
 		mDialog.show();
