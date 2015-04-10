@@ -22,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/img_recognize_source"
-            android:text="您要找的可能是:"
+            android:text="@string/you_may_find"
             android:textSize="15sp" />
 
         <com.scut.picturelibrary.views.FlowTagsLayout

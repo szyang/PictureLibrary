@@ -88,6 +88,8 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mSourcePath = intent.getStringExtra("path");
 		mFileName = intent.getStringExtra("filename");
 
+		setTitle(mFileName);
+
 		Bmob.initialize(this, "ee96600c38da5fe2c41328c00b90e2a1");
 
 		taskCollection = new HashSet<GetWorkerTask>();
@@ -134,6 +136,11 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		cancelAllTasks();
 	}
 
+	/**
+	 * 载入获得的相同图信息，包括图片和描述
+	 * 
+	 * @param response
+	 */
 	private void displayDownloadedSameImages(JSONObject response) {
 		JSONArray jsonarray;
 		try {
@@ -147,8 +154,11 @@ public class RecognizeImageActivity extends ActionBarActivity {
 						"thumbURL").toString();
 				String description = ((JSONObject) jsonarray.get(i)).get(
 						"textHost").toString();
+				String title = ((JSONObject) jsonarray.get(i)).get(
+						"fromPageTitleEnc").toString();
 				if (i < 3) {
-					mSameAdapter.add(new String[] { thumbURL, description });
+					mSameAdapter.add(new String[] { thumbURL,
+							title + "\n" + description });
 				}
 			}
 
@@ -157,6 +167,11 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * 载入获得的相似图片信息
+	 * 
+	 * @param response
+	 */
 	private void displayDownloadedSimiImages(JSONObject response) {
 		JSONArray jsonarray;
 		try {
@@ -174,6 +189,12 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * 上传图片到服务器
+	 * 
+	 * @param path
+	 * @param filename
+	 */
 	private void uploadImage(String path, String filename) {
 		File file = new File(path);
 		String url = null;
