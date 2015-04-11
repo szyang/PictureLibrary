@@ -120,6 +120,10 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
+		case R.id.action_search:
+			Intent intent=new Intent();
+			intent.setClass(MediaFoldersActivity.this, SearchImageActivity.class);
+			MediaFoldersActivity.this.startActivity(intent);
 		default:
 			break;
 		}

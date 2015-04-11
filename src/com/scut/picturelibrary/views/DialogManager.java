@@ -22,7 +22,7 @@ public class DialogManager {
 				context);
 		// 设置对话框的标题
 		builder.setTitle(title);
-		builder.setItems(new String[] { "识图" }, listener);
+		builder.setItems(new String[] { "识图","分享" }, listener);
 		// 创建一个列表对话框
 		mDialog = builder.create();
 		mDialog.show();
