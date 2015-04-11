@@ -7,11 +7,13 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.view.SurfaceHolder;
- /**
-  * 视频播放管理
-  * @author cyc
-  *
-  */
+
+/**
+ * 视频播放管理
+ * 
+ * @author cyc
+ * 
+ */
 public class VideoManager {
 
 	private MediaPlayer mediaPlayer;
@@ -39,12 +41,11 @@ public class VideoManager {
 			mediaPlayer.setOnPreparedListener(mOnPreparedListener);
 
 			mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-
+				
 				@Override
 				public void onCompletion(MediaPlayer arg0) {
-					// 播放完毕的时候回调
-				}
-
+					//播放完毕时回调
+					}
 			});
 
 			mediaPlayer.setOnErrorListener(new OnErrorListener() {
@@ -59,6 +60,15 @@ public class VideoManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	// 时间显示函数
+	public String ShowTime(int time) {
+		time /= 1000;
+		int minute = time / 60;
+		int second = time % 60;
+		minute %= 60;
+		return String.format("%02d:%02d", minute, second);
 	}
 
 	// 暂停
