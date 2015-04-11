@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.scut.picturelibrary.MainActivity" >
+    <item
+        android:id="@+id/action_search"
+         app:actionViewClass="android.support.v7.widget.SearchView"
+         android:icon="@drawable/search"
+        android:title="@string/search"
+        app:showAsAction="ifRoom|collapseActionView"
+        />
+    <item
+        android:id="@+id/action_sort_name"
+        android:orderInCategory="100"
+        android:title="@string/sort_name"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_sort_date"
+        android:orderInCategory="100"
+        android:title="@string/sort_date"
+        app:showAsAction="never"/>
+
+
+
+</menu>
