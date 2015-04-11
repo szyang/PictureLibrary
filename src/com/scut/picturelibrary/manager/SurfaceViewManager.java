@@ -8,13 +8,14 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.LinearLayout;
 
 import com.scut.picturelibrary.animation.MyCameraButtonAnimation;
+
 /**
  * SurfaceView管理
+ * 
  * @author cyc
- *
+ * 
  */
 public class SurfaceViewManager extends SurfaceView implements
 		SurfaceHolder.Callback {
@@ -87,11 +88,10 @@ public class SurfaceViewManager extends SurfaceView implements
 			} catch (IOException e) {
 
 			}
-
 			break;
 
 		case 2:
-			setLayoutParams(new LinearLayout.LayoutParams(width, height));
+
 			break;
 		}
 	}
@@ -132,9 +132,7 @@ public class SurfaceViewManager extends SurfaceView implements
 			break;
 
 		case 2:
-			mediaPlayer.stop();
-			mediaPlayer.release();
-			mediaPlayer = null;
+			
 			break;
 		}
 	}
@@ -149,5 +147,9 @@ public class SurfaceViewManager extends SurfaceView implements
 
 	public MediaPlayer getMyMediaPlayer() {
 		return mediaPlayer;
+	}
+
+	public String ShowTime(int currentTime) {
+		return mVideoManager.ShowTime(currentTime);
 	}
 }

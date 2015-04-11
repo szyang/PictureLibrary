@@ -7,10 +7,12 @@ import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
@@ -47,6 +49,8 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 	private final String SORT_BY_DATE = MediaStore.Images.Media.DATE_MODIFIED;
 
 	private String mSort = SORT_BY_NAME;
+
+	private long mKeyTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +98,8 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 				mAdapter.getCursor().moveToPosition(position);
 				Intent intent = new Intent();
 				intent.putExtra("bucketId", bucketId);
-				intent.setClass(MediaFoldersActivity.this, MediaFilesActivity.class);
+				intent.setClass(MediaFoldersActivity.this,
+						MediaFilesActivity.class);
 				MediaFoldersActivity.this.startActivity(intent);
 			}
 		});
@@ -160,4 +165,21 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		// 取消cursor
 		mAdapter.swapCursor(null);
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if ((System.currentTimeMillis() - mKeyTime) > 2000) {
+				mKeyTime = System.currentTimeMillis();
+				Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_LONG).show();
+			} else {
+				finish();
+			}
+
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
+
 }
