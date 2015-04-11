@@ -2,6 +2,7 @@ package com.scut.picturelibrary.activity;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,24 +24,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
+import com.bmob.BmobProFile;
+import com.bmob.btp.callback.LocalThumbnailListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
+import com.scut.picturelibrary.adapter.InSameListViewAdapter;
 import com.scut.picturelibrary.adapter.SimiAdapter;
 import com.scut.picturelibrary.database.UploadedFileTableUtil;
 import com.scut.picturelibrary.views.DialogManager;
+import com.scut.picturelibrary.views.FlowTagsLayout;
 import com.scut.picturelibrary.views.NoScrollGridView;
+import com.scut.picturelibrary.views.NoScrollListView;
 
 /**
  * 识图Activity
@@ -56,18 +64,23 @@ public class RecognizeImageActivity extends ActionBarActivity {
 	String mUploadFileUrl;
 	String mInsimiUrl;
 	String mInsameUrl;
-	int mSize;
+	long mSize;
 
 	Set<GetWorkerTask> taskCollection;
 	UploadedFileTableUtil mUploadedTable;
-	SimiAdapter mAdapter;
+	SimiAdapter mSimiAdapter;
+	InSameListViewAdapter mSameAdapter;
+	ArrayAdapter<String> mGuessKeyAdapter;
 
 	NoScrollGridView mSimiGridView;
-	LinearLayout mSameImagesLayout;
+	NoScrollListView mSameListView;
+
+	// LinearLayout mSameImagesLayout;
 	ImageView mSourceImage;
 	TextView mSameImagesTitleTextView;
 	TextView mSimiImagesTitleTextView;
 	TextView mGuessTextView;
+	FlowTagsLayout mFlowTagsLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,22 +90,36 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mSourcePath = intent.getStringExtra("path");
 		mFileName = intent.getStringExtra("filename");
 
-		Bmob.initialize(this, "ee96600c38da5fe2c41328c00b90e2a1");
+		setTitle(mFileName);
+
+		Bmob.initialize(getApplicationContext(),
+				"ee96600c38da5fe2c41328c00b90e2a1");
 
 		taskCollection = new HashSet<GetWorkerTask>();
 
-		mSameImagesLayout = (LinearLayout) findViewById(R.id.ll_recognize_insame_images);
+		// mSameImagesLayout = (LinearLayout)
+		// findViewById(R.id.ll_recognize_insame_images);
 		mSameImagesTitleTextView = (TextView) findViewById(R.id.txt_recognize_insame_title);
 		mSimiImagesTitleTextView = (TextView) findViewById(R.id.txt_recognize_insimi_title);
 		mGuessTextView = (TextView) findViewById(R.id.txt_recognize_guess);
 		mSourceImage = (ImageView) findViewById(R.id.img_recognize_source);
 		mSimiGridView = (NoScrollGridView) findViewById(R.id.grid_recognize_insimi);
+		mSameListView = (NoScrollListView) findViewById(R.id.lv_recognize_insame);
+		mFlowTagsLayout = (FlowTagsLayout) findViewById(R.id.ftl_recognize_guess);
 
 		mUploadedTable = new UploadedFileTableUtil(this);
-		mAdapter = new SimiAdapter(this, R.layout.grid_files_item,
-				R.id.img_grid_files_item_photo, new ArrayList<String>());
 
-		mSimiGridView.setAdapter(mAdapter);
+		mSameAdapter = new InSameListViewAdapter(this,
+				R.layout.listview_insame_item, R.id.img_lisview_insame_same,
+				R.id.txt_lisview_insame_description, new ArrayList<String[]>());
+		mSimiAdapter = new SimiAdapter(this, R.layout.grid_files_item,
+				R.id.img_grid_files_item_photo, new ArrayList<String>());
+		mGuessKeyAdapter = new ArrayAdapter<String>(this, R.layout.tags_item,
+				R.id.btn_tags_item_text);
+
+		mSameListView.setAdapter(mSameAdapter);
+		mFlowTagsLayout.setAdapter(mGuessKeyAdapter);
+		mSimiGridView.setAdapter(mSimiAdapter);
 
 		ImageLoader.getInstance().displayImage("file://" + mSourcePath,
 				mSourceImage);
@@ -112,19 +139,29 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		cancelAllTasks();
 	}
 
+	/**
+	 * 载入获得的相同图信息，包括图片和描述
+	 * 
+	 * @param response
+	 */
 	private void displayDownloadedSameImages(JSONObject response) {
 		JSONArray jsonarray;
 		try {
 			jsonarray = response.getJSONArray("data");
 			if (jsonarray.toString().equals("[{}]")) {
 				mSameImagesTitleTextView.setText("未找到相同图片");
+				return;
 			}
 			for (int i = 0; i < jsonarray.length(); i++) {
 				String thumbURL = ((JSONObject) jsonarray.get(i)).get(
 						"thumbURL").toString();
+				String description = ((JSONObject) jsonarray.get(i)).get(
+						"textHost").toString();
+				String title = ((JSONObject) jsonarray.get(i)).get(
+						"fromPageTitleEnc").toString();
 				if (i < 3) {
-					ImageLoader.getInstance().displayImage(thumbURL,
-							(ImageView) mSameImagesLayout.getChildAt(i));
+					mSameAdapter.add(new String[] { thumbURL,
+							title + "\n" + description });
 				}
 			}
 
@@ -133,6 +170,11 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * 载入获得的相似图片信息
+	 * 
+	 * @param response
+	 */
 	private void displayDownloadedSimiImages(JSONObject response) {
 		JSONArray jsonarray;
 		try {
@@ -143,32 +185,72 @@ public class RecognizeImageActivity extends ActionBarActivity {
 			for (int i = 0; i < jsonarray.length(); i++) {
 				String thumbURL = ((JSONObject) jsonarray.get(i)).get(
 						"thumbURL").toString();
-				mAdapter.add(thumbURL);
+				mSimiAdapter.add(thumbURL);
 			}
-			mAdapter.notifyDataSetChanged();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * 上传图片到服务器
+	 * 
+	 * @param path
+	 * @param filename
+	 */
 	private void uploadImage(String path, String filename) {
 		File file = new File(path);
-		final BmobFile bmobFile = new BmobFile(file);
-		FileInputStream fis = null;
 		String url = null;
+		// 获取文件大小
+		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
 			mSize = fis.available();
-			url = mUploadedTable.hasUploaded(filename, mSize);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// mSize = file.length();
+		// 尝试从数据库中获取上传后的图片url
+		url = mUploadedTable.hasUploaded(filename, mSize);
 		DialogManager.showProgressDialog(RecognizeImageActivity.this, null);
 		if (url != null) {// 已经上传过了
 			mUploadFileUrl = url;
 			getSimiSameImage(mUploadFileUrl);
 			return;
 		}
+		// 压缩图片后上传 200x200
+		BmobProFile bmobProFile = BmobProFile
+				.getInstance(RecognizeImageActivity.this);
+		if (bmobProFile == null) {
+			DialogManager.dismissDialog();
+			Toast.makeText(RecognizeImageActivity.this, "压缩文件失败!",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if (bmobProFile != null)
+			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 80,
+					new LocalThumbnailListener() {
+
+						@Override
+						public void onError(int statuscode, String errormsg) {
+							DialogManager.dismissDialog();
+							Toast.makeText(RecognizeImageActivity.this,
+									"压缩文件失败: " + errormsg, Toast.LENGTH_SHORT)
+									.show();
+						}
+
+						@Override
+						public void onSuccess(String thumbnailPath) {
+							BmobFile bmobFile = new BmobFile(new File(
+									thumbnailPath));
+							uploadBmobFile(bmobFile);
+						}
+					});
+	}
+
+	public void uploadBmobFile(final BmobFile bmobFile) {
 		// 未上传过，进行上传
 		bmobFile.uploadblock(this, new UploadFileListener() {
 
@@ -207,6 +289,16 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mInsameUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=3&pn=0&ct=1&stt=1&tn=insamejson&ie=utf-8&objurl="
 				+ uploadFileUrl;
 		DialogManager.dismissDialog();
+		DialogManager.showSimpleDialog(RecognizeImageActivity.this, "识别中",
+				"努力识图中，请稍侯", new OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface arg0) {
+						Toast.makeText(RecognizeImageActivity.this, "取消识别",
+								Toast.LENGTH_SHORT).show();
+						// 取消识别任务
+						cancelAllTasks();
+					}
+				});
 		GetWorkerTask simitask = new GetWorkerTask();
 		taskCollection.add(simitask);
 		simitask.execute(INSIMI, mInsimiUrl);
@@ -263,6 +355,9 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		return null;
 	}
 
+	private boolean sameTaskOver = false;
+	private boolean simiTaskOver = false;
+
 	class GetWorkerTask extends AsyncTask<String, Void, JSONObject> {
 
 		// params what url
@@ -312,17 +407,28 @@ public class RecognizeImageActivity extends ActionBarActivity {
 					String what = result.get("what").toString();
 					if (what.equals(INSIMI)) {
 						displayDownloadedSimiImages(result);
+						simiTaskOver = true;
 					}
 					if (what.equals(INSAME)) {
 						displayDownloadedSameImages(result);
-						if (mKeyword != null && mKeyword.length() > 0)
-							mGuessTextView.setText("您要找的可能是:\n\n  " + mKeyword);
-						else
+						sameTaskOver = true;
+						if (mKeyword != null && mKeyword.length() > 0) {
+							mGuessTextView.setText("您要找的可能是:");
+							String[] keywords = mKeyword.split("\\*");
+							// 显示最多4个关键字
+							for (int i = 0; i < keywords.length && i < 4; i++) {
+								mGuessKeyAdapter.add(keywords[i]);
+							}
+						} else {
 							mGuessTextView.setText("找不到关键字");
+						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+			}
+			if (sameTaskOver && simiTaskOver) {// 相似和相同图片信息获取完毕
+				DialogManager.dismissDialog();
 			}
 			taskCollection.remove(this);
 		}
