@@ -12,6 +12,12 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+/**
+ * 识图中相同图片ListView的Adapter
+ * 
+ * @author 黄建斌
+ * 
+ */
 public class InSameListViewAdapter extends ArrayAdapter<Map<String, String>> {
 	private List<Map<String, String>> mSameImagesUrlList;
 	private int mImageViewResourceId;

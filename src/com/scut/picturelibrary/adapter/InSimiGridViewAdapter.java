@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
- * 识图中类似图片Gridview的Adapter
+ * 识图中类似图片GridView的Adapter
  * 
  * @author 黄建斌
  * 

@@ -57,12 +57,12 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_folders);
 		initImageLoader();
-		// 进行cursorloader初始化
-		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 		// 初始化视图
 		initView();
 		// 设置监听器
 		initListener();
+		// 进行cursorloader初始化
+		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 	}
 
 	private void initView() {
@@ -72,6 +72,9 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 	}
 
 	private void initImageLoader() {
+		if (ImageLoader.getInstance().isInited()) {
+			return;
+		}
 		// 设置图片显示选项
 		DisplayImageOptions displayOp = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.bg_loading)// 图片正在加载时显示的背景
@@ -121,8 +124,9 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
 		case R.id.action_search:
-			Intent intent=new Intent();
-			intent.setClass(MediaFoldersActivity.this, SearchImageActivity.class);
+			Intent intent = new Intent();
+			intent.setClass(MediaFoldersActivity.this,
+					SearchImageActivity.class);
 			MediaFoldersActivity.this.startActivity(intent);
 		default:
 			break;
