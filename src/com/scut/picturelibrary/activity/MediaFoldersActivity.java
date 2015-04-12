@@ -2,6 +2,7 @@ package com.scut.picturelibrary.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -12,14 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
@@ -81,10 +81,11 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 				.cacheInMemory(true)// 缓存在内存中
 				.cacheOnDisk(true)// 缓存在磁盘中
 				.displayer(new FadeInBitmapDisplayer(400))// 显示渐变动画
-				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED)// 按ImageView的scaleType进行压缩
+				.bitmapConfig(Bitmap.Config.RGB_565) // 设置图片的解码类型
 				.build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).defaultDisplayImageOptions(displayOp).build();
+				this).defaultDisplayImageOptions(displayOp)
+				.denyCacheImageMultipleSizesInMemory().build();
 		ImageLoader.getInstance().init(config);
 	}
 
