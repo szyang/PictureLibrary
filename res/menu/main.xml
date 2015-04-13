@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.scut.picturelibrary.MainActivity" >
+<<<<<<< HEAD
 
     <item
         android:id="@+id/action_overflow"
@@ -20,6 +21,14 @@
         </menu>
     </item>
     <item
+=======
+  <item
+        android:id="@+id/action_search"
+        android:title="@string/search"
+        android:icon="@drawable/search"
+        app:showAsAction="always"
+        />    <item
+>>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
         android:id="@+id/action_sort_name"
         android:orderInCategory="100"
         android:title="@string/sort_name"
