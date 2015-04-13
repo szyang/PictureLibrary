@@ -154,6 +154,19 @@ public class SearchImageActivity extends ActionBarActivity implements
 				return false;
 			}
 		});
+//		nGridView.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View v,
+//					int position, long id) {
+//				// TODO 点击显示大图，画廊浏览
+//				Intent intent = new Intent();
+//				intent.setAction(Intent.ACTION_VIEW);
+//				Uri content_url = Uri.parse(nAdapter.getFromURL(position));
+//				intent.setData(content_url);
+//				startActivity(intent);
+//			}
+//		});
 	}
 
 	// 显示网络图片
