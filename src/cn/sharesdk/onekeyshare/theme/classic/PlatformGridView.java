@@ -34,7 +34,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import cn.sharesdk.framework.CustomPlatform;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.framework.utils.UIHandler;
@@ -57,16 +56,11 @@ public class PlatformGridView extends LinearLayout implements
 	private ImageView[] points;
 	private Bitmap grayPoint;
 	private Bitmap bluePoint;
-	// Determine whether don't jump editpage and share directly
-	private boolean silent;
 	// platforms
 	private Platform[] platformList;
-	// data to share
-	private HashMap<String, Object> reqData;
 	private PlatformListPage parent;
 	private ArrayList<CustomerLogo> customers;
 	private HashMap<String, String> hiddenPlatforms;
-	private View bgView;
 	private long lastClickTime;
 
 	public PlatformGridView(Context context) {
@@ -201,8 +195,6 @@ public class PlatformGridView extends LinearLayout implements
 	}
 
 	public void setData(HashMap<String, Object> data, boolean silent) {
-		reqData = data;
-		this.silent = silent;
 	}
 
 	public void setHiddenPlatforms(HashMap<String, String> hiddenPlatforms) {
@@ -215,7 +207,6 @@ public class PlatformGridView extends LinearLayout implements
 	}
 
 	public void setEditPageBackground(View bgView) {
-		this.bgView = bgView;
 	}
 
 	/** Sets the callback page sharing operations */
