@@ -2,22 +2,24 @@ package com.scut.picturelibrary.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
@@ -48,17 +50,19 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 
 	private String mSort = SORT_BY_NAME;
 
+	private long mKeyTime;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_folders);
 		initImageLoader();
-		// 进行cursorloader初始化
-		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 		// 初始化视图
 		initView();
 		// 设置监听器
 		initListener();
+		// 进行cursorloader初始化
+		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 	}
 
 	private void initView() {
@@ -68,16 +72,20 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 	}
 
 	private void initImageLoader() {
+		if (ImageLoader.getInstance().isInited()) {
+			return;
+		}
 		// 设置图片显示选项
 		DisplayImageOptions displayOp = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.bg_loading)// 图片正在加载时显示的背景
 				.cacheInMemory(true)// 缓存在内存中
 				.cacheOnDisk(true)// 缓存在磁盘中
 				.displayer(new FadeInBitmapDisplayer(400))// 显示渐变动画
-				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED)// 按ImageView的scaleType进行压缩
+				.bitmapConfig(Bitmap.Config.RGB_565) // 设置图片的解码类型
 				.build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).defaultDisplayImageOptions(displayOp).build();
+				this).defaultDisplayImageOptions(displayOp)
+				.denyCacheImageMultipleSizesInMemory().build();
 		ImageLoader.getInstance().init(config);
 	}
 
@@ -94,7 +102,8 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 				mAdapter.getCursor().moveToPosition(position);
 				Intent intent = new Intent();
 				intent.putExtra("bucketId", bucketId);
-				intent.setClass(MediaFoldersActivity.this, MediaFilesActivity.class);
+				intent.setClass(MediaFoldersActivity.this,
+						MediaFilesActivity.class);
 				MediaFoldersActivity.this.startActivity(intent);
 			}
 		});
@@ -115,6 +124,11 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
+		case R.id.action_search:
+			Intent intent = new Intent();
+			intent.setClass(MediaFoldersActivity.this,
+					SearchImageActivity.class);
+			MediaFoldersActivity.this.startActivity(intent);
 		default:
 			break;
 		}
@@ -160,4 +174,21 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		// 取消cursor
 		mAdapter.swapCursor(null);
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if ((System.currentTimeMillis() - mKeyTime) > 2000) {
+				mKeyTime = System.currentTimeMillis();
+				Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_LONG).show();
+			} else {
+				finish();
+			}
+
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
+
 }

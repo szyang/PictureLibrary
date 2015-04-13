@@ -10,5 +10,7 @@
     <string name="reco_image">识图</string>
     <string name="same_image">相同图片</string>
     <string name="simi_image">相似图片</string>
+    <string name="you_may_find">您要找的可能是:</string>
+    <string name="search">搜索</string>
 
 </resources>

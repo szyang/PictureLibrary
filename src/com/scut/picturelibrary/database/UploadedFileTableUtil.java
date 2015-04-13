@@ -25,22 +25,22 @@ public class UploadedFileTableUtil {
 		dbHelper = new UploadedFileDatabaseHalper(context, null, 1);
 	}
 
-	public boolean insert(String filename, int size, String url) {
+	public boolean insert(String filename, long mSize, String url) {
 		db = dbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(FILE_NAME, filename);
 		values.put(URL, url);
-		values.put(SIZE, size);
+		values.put(SIZE, mSize);
 		db.insert(TABLE_NAME, null, values);
 		db.close();
 		return true;
 	}
 
-	public String hasUploaded(String filename, int size) {
+	public String hasUploaded(String filename, long mSize) {
 		db = dbHelper.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_NAME, new String[] { _ID, FILE_NAME,
 				SIZE, URL }, "filename=? AND size=?", new String[] { filename,
-				String.valueOf(size) }, null, null, null);
+				String.valueOf(mSize) }, null, null, null);
 		String url = null;
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 			url = cursor.getString(cursor.getColumnIndex(URL));

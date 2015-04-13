@@ -41,14 +41,12 @@ public class MediaFilesAdapter extends CursorAdapter {
 	public void bindView(View v, Context context, Cursor cursor) {
 		if (cursor == null)
 			return;
-		final String path = cursor.getString(cursor
-				.getColumnIndex(MediaStore.Images.Media.DATA));
 		ViewHolder viewHolder = (ViewHolder) v.getTag();
 		// 使用外部库ImageLoader进行图片缓存和异步加载显示
 		int typeIndex = cursor.getColumnIndex("type");
+		String id = cursor.getString(cursor
+				.getColumnIndex(MediaStore.Images.Media._ID));
 		if (typeIndex >= 0 && cursor.getString(typeIndex).equals("video")) {
-			String id = cursor.getString(cursor
-					.getColumnIndex(MediaStore.Video.Media._ID));
 			// 视频格式的略缩图
 			ImageLoader.getInstance().displayImage(
 					"content://media/external/video/media/" + id,
@@ -56,7 +54,8 @@ public class MediaFilesAdapter extends CursorAdapter {
 			viewHolder.imgHover.setImageResource(mVideoHoverResource);
 		} else {
 			// 图片略缩图
-			ImageLoader.getInstance().displayImage("file:///" + path,
+			ImageLoader.getInstance().displayImage(
+					"content://media/external/images/media/" + id,
 					viewHolder.imgThumbnail);
 			viewHolder.imgHover.setImageResource(mImageHoverResource);
 		}
