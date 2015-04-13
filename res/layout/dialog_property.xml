@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+<TextView 
+    android:id="@+id/path_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+       android:layout_marginTop="2dp"
+    android:textSize="17dp"
+    android:text="路径"    
+    />
+<TextView 
+    android:id="@+id/path"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/path_name"
+    android:layout_marginLeft="15dp"
+       android:layout_marginTop="2dp"
+     android:textSize="17dp"
+    android:singleLine="false"
+    android:width="230dp" 
+    />
+<TextView 
+    android:id="@+id/filesize_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/path"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="5dp"
+    android:textSize="17dp"
+    android:text="大小"    
+    />
+<TextView 
+    android:id="@+id/filesize"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/time_name"
+    android:layout_below="@+id/path"
+    android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+     android:textSize="17dp"
+    android:singleLine="false"
+    android:width="230dp" 
+    />
+<TextView 
+    android:id="@+id/size_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/filesize"
+    android:layout_marginLeft="10dp"
+       android:layout_marginTop="5dp"
+    android:textSize="17dp"
+    android:text="尺寸"    
+    />
+<TextView 
+    android:id="@+id/size"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/size_name"
+    android:layout_below="@+id/filesize"
+    android:layout_marginLeft="15dp"
+       android:layout_marginTop="5dp"
+     android:textSize="17dp"
+    android:singleLine="false"
+    android:width="230dp" 
+    />
+<TextView 
+    android:id="@+id/time_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/size"
+    android:layout_marginLeft="10dp"
+       android:layout_marginTop="5dp"
+    android:textSize="17dp"
+    android:text="时间"    
+    />
+<TextView 
+    android:id="@+id/time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/time_name"
+    android:layout_below="@+id/size"
+    android:layout_marginLeft="15dp"
+       android:layout_marginTop="5dp"
+     android:textSize="17dp"
+    android:singleLine="false"
+    android:width="230dp" 
+    />
+
+</RelativeLayout>
