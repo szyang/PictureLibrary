@@ -11,5 +11,8 @@
     <string name="same_image">相同图片</string>
     <string name="simi_image">相似图片</string>
     <string name="you_may_find">您要找的可能是:</string>
+    <string name="action_media">媒体</string>
+    <string name="activity_camera">拍照</string>
+    <string name="activity_recorder">录像</string>
 
 </resources>

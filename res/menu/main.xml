@@ -2,7 +2,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.scut.picturelibrary.MainActivity" >
-    <item
+
+    <item
+        android:id="@+id/action_overflow"
+        android:icon="@drawable/img_action_overflow"
+        app:showAsAction="always"
+        android:title="@string/action_media">
+        <menu>
+            <item
+                android:id="@+id/action_activity_camera"
+                android:title="@string/activity_camera"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/action_activity_recorder"
+                android:title="@string/activity_recorder"
+                app:showAsAction="ifRoom"/>
+        </menu>
+    </item>
+    <item
         android:id="@+id/action_sort_name"
         android:orderInCategory="100"
         android:title="@string/sort_name"

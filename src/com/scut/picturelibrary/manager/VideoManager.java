@@ -31,7 +31,8 @@ public class VideoManager {
 
 	// 播放
 	public void play(String filePath, SurfaceHolder holder,
-			OnPreparedListener mOnPreparedListener) {
+			OnPreparedListener mOnPreparedListener,
+			OnCompletionListener mOnCompletionListener) {
 		try {
 			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 			// 设置播放源
@@ -40,13 +41,7 @@ public class VideoManager {
 			mediaPlayer.prepareAsync();
 			mediaPlayer.setOnPreparedListener(mOnPreparedListener);
 
-			mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-				
-				@Override
-				public void onCompletion(MediaPlayer arg0) {
-					//播放完毕时回调
-					}
-			});
+			mediaPlayer.setOnCompletionListener(mOnCompletionListener);
 
 			mediaPlayer.setOnErrorListener(new OnErrorListener() {
 

@@ -80,18 +80,18 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				String path = mAdapter.getPath(position);
 				Intent it = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse("file:///" + path);
-                
+
 				if (mAdapter.getType(position).equals("video")) {// 视频
 					Intent intent = new Intent();
-					intent.setClass(MediaFilesActivity.this, VideoActivity.class);
+					intent.setClass(MediaFilesActivity.this,
+							VideoActivity.class);
 					intent.putExtra("filePath", path);
 					startActivity(intent);
-				}
-				else { // 图片
+				} else { // 图片
 					it.setDataAndType(uri, "image/*");
 					startActivity(it);
 				}
-				
+
 			}
 		});
 		mGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -104,8 +104,7 @@ public class MediaFilesActivity extends ActionBarActivity implements
 					final String path = mAdapter.getPath(position);
 					final String filename = mAdapter.getTitle(position);
 					DialogManager.showImageItemMenuDialog(
-							MediaFilesActivity.this,
-							filename,
+							MediaFilesActivity.this, filename,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -144,11 +143,23 @@ public class MediaFilesActivity extends ActionBarActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
+		Intent intentMedia = new Intent();
 		switch (id) {// 根据选项进行排序
 		case R.id.action_sort_name:
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
+			// 开始拍照或录像
+		case R.id.action_activity_camera:
+			intentMedia.setClass(MediaFilesActivity.this,
+					CameraActivity.class);
+			startActivity(intentMedia);
+			break;
+		case R.id.action_activity_recorder:
+			intentMedia.setClass(MediaFilesActivity.this,
+					MediaRecorderActivity.class);
+			startActivity(intentMedia);
+			break;
 		default:
 			break;
 		}

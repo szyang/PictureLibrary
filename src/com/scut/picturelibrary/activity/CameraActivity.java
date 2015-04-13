@@ -1,12 +1,13 @@
 package com.scut.picturelibrary.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.animation.MyCameraButtonAnimation;
@@ -20,14 +21,14 @@ public class CameraActivity extends Activity implements OnClickListener {
 
 	public final static int MEDIA_TYPE_CAMERA = 1;
 
-	// 拍照界面的按钮，主页、分割线、相册、拍照、更多
-	private ImageButton mCameraHome;
+	// 拍照界面的按钮，返回、分割线、相册、拍照、更多
+	private ImageButton mCameraBack;
 	private ImageButton mCameraWell;
 	private ImageButton mCameraAlbum;
 	private ImageButton mCameraTake;
 	private ImageButton mCameraMore;
 	// 拍照预览
-	private FrameLayout mCameraPreview;
+	private LinearLayout mCameraPreview;
 
 	private SurfaceViewManager mSurfaceViewManager;
 
@@ -37,8 +38,8 @@ public class CameraActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
 
-		mCameraHome = (ImageButton) findViewById(R.id.ibtn_camera_home);
-		mCameraHome.setOnClickListener(this);
+		mCameraBack = (ImageButton) findViewById(R.id.ibtn_camera_back);
+		mCameraBack.setOnClickListener(this);
 		mCameraWell = (ImageButton) findViewById(R.id.ibtn_camera_well);
 		mCameraWell.setOnClickListener(this);
 		mCameraAlbum = (ImageButton) findViewById(R.id.ibtn_camera_album);
@@ -50,22 +51,23 @@ public class CameraActivity extends Activity implements OnClickListener {
 		// 传入第第二个参数为媒体类型，第三个参数为控件动画
 		mSurfaceViewManager = new SurfaceViewManager(this, MEDIA_TYPE_CAMERA,
 				btAnimation);
-		mCameraPreview = (FrameLayout) findViewById(R.id.fl_camera_preview);
+		mCameraPreview = (LinearLayout) findViewById(R.id.ll_camera_preview);
 		mCameraPreview.addView(mSurfaceViewManager);
 
 	}
 
 	@Override
 	public void onClick(View view) {
+		
 		switch (view.getId()) {
-		case R.id.ibtn_camera_home:
-
+		case R.id.ibtn_camera_back:
+            finish();
 			break;
 		case R.id.ibtn_camera_well:
 
 			break;
 		case R.id.ibtn_camera_album:
-
+            
 			break;
 		case R.id.ibtn_camera_take:
 			mSurfaceViewManager.takePhoto();
@@ -80,7 +82,7 @@ public class CameraActivity extends Activity implements OnClickListener {
 	private MyCameraButtonAnimation btAnimation = new MyCameraButtonAnimation() {
 		@Override
 		public void executeAnimation(Animation animation) {
-			mCameraHome.startAnimation(animation);
+			mCameraBack.startAnimation(animation);
 			mCameraWell.startAnimation(animation);
 			mCameraAlbum.startAnimation(animation);
 			mCameraTake.startAnimation(animation);
