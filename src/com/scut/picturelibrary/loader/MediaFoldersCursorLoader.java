@@ -29,15 +29,24 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	private final static String TAG = "ImageVideoCursorLoader";
 
 	// Uri mUri;
-	String[] mProjection = new String[] { MediaStore.Images.Media._ID,// 文件ID
+	String[] mImageProjection = new String[] {
+			MediaStore.Images.Media._ID,// 文件ID
 			MediaStore.Images.Media.BUCKET_ID, // 文件夹ID
 			MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
 			MediaStore.Images.Media.DATE_MODIFIED,// 修改日期
 			MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
 			MediaStore.Images.Media.DATA, // 图片绝对路径
-			"count(" + MediaStore.Images.Media._ID + ") as num" };
-	String[] mImageProjection;
-	String[] mVideoProjection;
+			"count(" + MediaStore.Images.Media._ID + ") as num",
+			"'image' as type" };
+	String[] mVideoProjection = new String[] {
+			MediaStore.Images.Media._ID,// 文件ID
+			MediaStore.Images.Media.BUCKET_ID, // 文件夹ID
+			MediaStore.Images.Media.BUCKET_DISPLAY_NAME, // 直接包含该图片文件的文件夹名
+			MediaStore.Images.Media.DATE_MODIFIED,// 修改日期
+			MediaStore.Images.Media.DISPLAY_NAME, // 图片文件名
+			MediaStore.Images.Media.DATA, // 图片绝对路径
+			"count(" + MediaStore.Images.Media._ID + ") as num",
+			"'video' as type" };
 	String mSelection = " 0==0) group by bucket_id --(";
 	String mSortOrder;
 
@@ -208,14 +217,6 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	public MediaFoldersCursorLoader(Context context, String sortOrder) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
-		mImageProjection = new String[mProjection.length + 1];
-		mVideoProjection = new String[mProjection.length + 1];
-		for (int i = 0; i < mProjection.length; i++) {
-			mImageProjection[i] = mProjection[i];
-			mVideoProjection[i] = mProjection[i];
-		}
-		mImageProjection[mProjection.length] = "'image' as type";
-		mVideoProjection[mProjection.length] = "'video' as type";
 		mSortOrder = sortOrder;
 	}
 
@@ -266,10 +267,6 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 		mCursor = null;
 	}
 
-	public String[] getProjection() {
-		return mProjection;
-	}
-
 	public String getSelection() {
 		return mSelection;
 	}
@@ -281,27 +278,24 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	public void setSortOrder(String sortOrder) {
 		mSortOrder = sortOrder;
 	}
+
 	@Override
 	public void dump(String prefix, FileDescriptor fd, PrintWriter writer,
 			String[] args) {
 		super.dump(prefix, fd, writer, args);
-		// writer.print(prefix); writer.print("mUri="); writer.println(mUri);
 		writer.print(prefix);
-		writer.print("mProjection=");
-		writer.println(Arrays.toString(mProjection));
+		writer.print("mImageProjection=");
+		writer.println(Arrays.toString(mImageProjection));
+		writer.print("mVideoProjection=");
+		writer.println(Arrays.toString(mVideoProjection));
 		writer.print(prefix);
 		writer.print("mSelection=");
 		writer.println(mSelection);
-		writer.print(prefix);
-		// writer.print("mSelectionArgs=");
-		// writer.println(Arrays.toString(mSelectionArgs));
 		writer.print(prefix);
 		writer.print("mSortOrder=");
 		writer.println(mSortOrder);
 		writer.print(prefix);
 		writer.print("mCursor=");
 		writer.println(mCursor);
-		// writer.print(prefix); writer.print("mContentChanged=");
-		// writer.println(mContentChanged);
 	}
 }

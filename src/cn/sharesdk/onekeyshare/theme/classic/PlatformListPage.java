@@ -8,13 +8,12 @@
 
 package cn.sharesdk.onekeyshare.theme.classic;
 
-import static cn.sharesdk.framework.utils.R.getStringRes;
 import static cn.sharesdk.framework.utils.R.getBitmapRes;
+import static cn.sharesdk.framework.utils.R.getStringRes;
 
 import java.util.ArrayList;
 
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -63,7 +62,7 @@ public class PlatformListPage extends PlatformListFakeActivity implements View.O
 	private void initPageView() {
 		flPage = new FrameLayout(getContext());
 		flPage.setOnClickListener(this);
-		flPage.setBackgroundDrawable(new ColorDrawable(0x55000000));
+		flPage.setBackgroundColor(0x55000000);
 
 		// container of the platform gridview
 		llPage = new LinearLayout(getContext()) {
@@ -72,7 +71,7 @@ public class PlatformListPage extends PlatformListFakeActivity implements View.O
 			}
 		};
 		llPage.setOrientation(LinearLayout.VERTICAL);
-		llPage.setBackgroundDrawable(new ColorDrawable(0xffffffff));
+		llPage.setBackgroundColor(0xffffffff);
 		FrameLayout.LayoutParams lpLl = new FrameLayout.LayoutParams(
 				FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 		lpLl.gravity = Gravity.BOTTOM;
@@ -101,7 +100,7 @@ public class PlatformListPage extends PlatformListFakeActivity implements View.O
 		if(resId > 0){
 			btnCancel.setBackgroundResource(resId);
 		}else {
-		    btnCancel.setBackgroundDrawable(new ColorDrawable(0xffffffff));
+		    btnCancel.setBackgroundColor(0xffffffff);
 		}
 
 		LinearLayout.LayoutParams lpBtn = new LinearLayout.LayoutParams(
