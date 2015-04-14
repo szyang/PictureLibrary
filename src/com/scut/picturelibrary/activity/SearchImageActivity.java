@@ -154,34 +154,37 @@ public class SearchImageActivity extends ActionBarActivity implements
 				return false;
 			}
 		});
-//		nGridView.setOnItemClickListener(new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View v,
-//					int position, long id) {
-//				// TODO 点击显示大图，画廊浏览
-//				Intent intent = new Intent();
-//				intent.setAction(Intent.ACTION_VIEW);
-//				Uri content_url = Uri.parse(nAdapter.getFromURL(position));
-//				intent.setData(content_url);
-//				startActivity(intent);
-//			}
-//		});
+		nGridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				// TODO 点击显示大图，画廊浏览
+				Intent intent = new Intent();
+				intent.setAction(Intent.ACTION_VIEW);
+				Uri content_url = Uri.parse(nAdapter.getFromURL(position));
+				intent.setData(content_url);
+				startActivity(intent);
+			}
+		});
 	}
 
 	// 显示网络图片
 	private void displayImage(JSONObject json) throws JSONException {
 		// 从网页返回的json取data数组
 		String thumbURL;
+		String fromURL;
 		JSONArray jsonarray = json.getJSONArray("data");
 		// 获取data数组中的缩略图地址
 		for (int i = 0; i < jsonarray.length(); i++)
 		// 先转为jsonobject再获取数据；
 		{
 			thumbURL = ((JSONObject) jsonarray.get(i)).getString("thumbURL");
-			// 适配器中加上图片地址
+			fromURL=((JSONObject)jsonarray.get(i)).getString("fromURL");
+			// 适配器中加上图片地址,适配器地址添加位置
 			Map<String,String> map = new HashMap<String, String>();
 			map.put(InSimiGridViewAdapter.IMAGE_URL, thumbURL);
+			map.put(InSimiGridViewAdapter.FROM_URL, fromURL);
 			nAdapter.add(map);
 		}
 		nAdapter.notifyDataSetChanged();
@@ -260,14 +263,7 @@ public class SearchImageActivity extends ActionBarActivity implements
 				return false;
 			}
 		});
-		searchView
-				.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-					@Override
-					public void onFocusChange(View view, boolean focus) {
-						if (!focus) {// searchView.setIconified(true);
-						}
-					}
-				});
+
 		return true;
 	}
 
