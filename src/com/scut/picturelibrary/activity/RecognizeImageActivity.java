@@ -274,7 +274,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (bmobProFile != null)
+		if (bmobProFile != null && !path.endsWith(".gif")) {
 			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 80,
 					new LocalThumbnailListener() {
 
@@ -293,6 +293,10 @@ public class RecognizeImageActivity extends ActionBarActivity {
 							uploadBmobFile(bmobFile);
 						}
 					});
+		} else {
+			BmobFile bmobFile = new BmobFile(new File(path));
+			uploadBmobFile(bmobFile);
+		}
 	}
 
 	public void uploadBmobFile(final BmobFile bmobFile) {
