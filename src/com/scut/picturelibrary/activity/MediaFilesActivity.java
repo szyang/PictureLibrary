@@ -80,12 +80,6 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				// TODO 点击显示完整图片or播放视频
 				// 目前是调用外部程序
 				String path = mAdapter.getPath(position);
-<<<<<<< HEAD
-				Intent it = new Intent(Intent.ACTION_VIEW);
-				Uri uri = Uri.parse("file:///" + path);
-
-=======
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
 				if (mAdapter.getType(position).equals("video")) {// 视频
 					Intent intent = new Intent();
 					intent.setClass(MediaFilesActivity.this,
@@ -93,9 +87,6 @@ public class MediaFilesActivity extends ActionBarActivity implements
 					intent.putExtra("filePath", path);
 					startActivity(intent);
 				} else { // 图片
-<<<<<<< HEAD
-					it.setDataAndType(uri, "image/*");
-=======
 					Intent it = new Intent();
 					Uri uri = Uri.parse("file:///" + path);
 					int count = mAdapter.getCount();
@@ -111,7 +102,6 @@ public class MediaFilesActivity extends ActionBarActivity implements
 					it.putExtra("path_all", path_base);
 					it.setClass(MediaFilesActivity.this,
 							ImageViewActivity.class);
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
 					startActivity(it);
 				}
 
@@ -183,11 +173,9 @@ public class MediaFilesActivity extends ActionBarActivity implements
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
-<<<<<<< HEAD
 			// 开始拍照或录像
 		case R.id.action_activity_camera:
-			intentMedia.setClass(MediaFilesActivity.this,
-					CameraActivity.class);
+			intentMedia.setClass(MediaFilesActivity.this, CameraActivity.class);
 			startActivity(intentMedia);
 			break;
 		case R.id.action_activity_recorder:
@@ -195,12 +183,10 @@ public class MediaFilesActivity extends ActionBarActivity implements
 					MediaRecorderActivity.class);
 			startActivity(intentMedia);
 			break;
-=======
 		case R.id.action_search:
 			Intent intent = new Intent();
 			intent.setClass(MediaFilesActivity.this, SearchImageActivity.class);
 			MediaFilesActivity.this.startActivity(intent);
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
 		default:
 			break;
 		}

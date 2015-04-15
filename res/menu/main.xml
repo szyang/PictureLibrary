@@ -2,13 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.scut.picturelibrary.MainActivity" >
-<<<<<<< HEAD
 
     <item
         android:id="@+id/action_overflow"
         android:icon="@drawable/img_action_overflow"
-        app:showAsAction="always"
-        android:title="@string/action_media">
+        android:title="@string/action_media"
+        app:showAsAction="always">
         <menu>
             <item
                 android:id="@+id/action_activity_camera"
@@ -21,22 +20,25 @@
         </menu>
     </item>
     <item
-=======
-  <item
         android:id="@+id/action_search"
-        android:title="@string/search"
-        android:icon="@drawable/search"
-        app:showAsAction="always"
-        />    <item
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
-        android:id="@+id/action_sort_name"
-        android:orderInCategory="100"
-        android:title="@string/sort_name"
-        app:showAsAction="never"/>
+        android:icon="@drawable/img_action_search"
+        android:title="@string/action_search"
+        app:showAsAction="always"/>
     <item
-        android:id="@+id/action_sort_date"
-        android:orderInCategory="100"
-        android:title="@string/sort_date"
-        app:showAsAction="never"/>
+        android:id="@+id/action_sort"
+        android:icon="@drawable/img_action_sort"
+        android:title="@string/action_sort"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_sort_name"
+                android:title="@string/sort_name"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/action_sort_date"
+                android:title="@string/sort_date"
+                app:showAsAction="ifRoom"/>
+        </menu>
+    </item>
 
 </menu>

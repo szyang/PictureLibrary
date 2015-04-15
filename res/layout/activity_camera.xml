@@ -6,35 +6,33 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <FrameLayout
+            android:id="@+id/fl_camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </FrameLayout>
 
         <ImageButton
             android:id="@+id/ibtn_camera_back"
             style="@style/ImageButtonStyle"
+            android:layout_alignParentTop="true"
             android:src="@drawable/img_media_back" />
 
         <ImageButton
             android:id="@+id/ibtn_camera_well"
             style="@style/ImageButtonStyle"
             android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:src="@drawable/img_camera_well" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <LinearLayout
-            android:id="@+id/ll_camera_preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="#000000" >
 
         <ImageButton

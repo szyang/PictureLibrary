@@ -165,6 +165,7 @@ public class SurfaceViewManager extends SurfaceView implements
 
 			break;
 		case 3:
+			releaseMediaRecorder();
 			releaseCamera();
 			break;
 		}
@@ -268,6 +269,7 @@ public class SurfaceViewManager extends SurfaceView implements
 
 	// 释放录像机
 	public void releaseMediaRecorder() {
-		mRecorderManager.releaseMediaRecorder();
+		mRecorderManager.releaseMediaRecorder(mCamera);
 	}
+	
 }

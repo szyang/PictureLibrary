@@ -9,13 +9,12 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.scut.picturelibrary.utils.CameraCheck;
@@ -34,6 +33,10 @@ public class CameraManager {
 	private Camera mCamera;
 
 	private Context context;
+	// 保存的照片文件
+	private File pictureFile;
+	// 保存的照片文件路径
+	private String filePath;
 
 	int setFixPictureWidth = 0;
 
@@ -111,8 +114,7 @@ public class CameraManager {
 		protected String doInBackground(byte[]... params) {
 			if (Environment.getExternalStorageState().equals(
 					Environment.MEDIA_MOUNTED)) {
-				File pictureFile = FileUtil
-						.getOutPutMediaFile(MEDIA_TYPE_IMAGE);
+				pictureFile = FileUtil.getOutPutMediaFile(MEDIA_TYPE_IMAGE);
 				if (pictureFile == null) {
 					return null;
 				}
@@ -126,25 +128,29 @@ public class CameraManager {
 				} catch (IOException e) {
 
 				}
-				String filePath = pictureFile.getAbsolutePath();
-				String fileName = filePath
-						.substring(filePath.lastIndexOf("/") + 1);
-				try { // 把文件插入系统图库
-					MediaStore.Images.Media.insertImage(
-							context.getContentResolver(), filePath, fileName,
-							null);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-				// 通知图库更新
-				context.sendBroadcast(new Intent(
-						Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri
-								.parse("file://" + filePath)));
-
+				filePath = pictureFile.getAbsolutePath();
 			} else {
 				Toast.makeText(context, "SD卡不存在", Toast.LENGTH_SHORT).show();
 			}
-			return null;
+			return filePath;
 		}
+
+		// doInBackground执行完后调用，filePath是上面执行完后的返回值
+		@Override
+		protected void onPostExecute(final String filePath) {
+			super.onPostExecute(filePath);
+			scanFile(filePath);
+		}
+	}
+    //根据文件路径扫描照片文件
+	private void scanFile(String path) {
+
+		MediaScannerConnection.scanFile(context,
+				new String[] { path }, null,
+				new MediaScannerConnection.OnScanCompletedListener() {
+
+					public void onScanCompleted(String path, Uri uri) {
+					}
+				});
 	}
 }

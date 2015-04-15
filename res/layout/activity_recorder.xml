@@ -9,16 +9,21 @@
         android:layout_height="0dp"
         android:layout_weight="1" >
 
+        <FrameLayout
+            android:id="@+id/fl_recorder_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
         <ImageButton
             android:id="@+id/ibtn_recorder_back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="8dp"
             android:background="#00000000"
-            android:src="@drawable/img_media_back"
-            />
+            android:src="@drawable/img_media_back" />
 
         <TextView
             android:id="@+id/tv_recorder_time"
@@ -27,20 +32,15 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_margin="8dp"
+            android:background="#00000000"
             android:text="00:00" />
-
-        <LinearLayout
-            android:id="@+id/ll_recorder_preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:background="#000000"
+        android:gravity="center"
         android:orientation="horizontal" >
 
         <ImageButton

@@ -3,11 +3,10 @@ package com.scut.picturelibrary.activity;
 import android.app.Activity;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +31,7 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 	private String time;
 
 	// 摄像预览
-	private LinearLayout mRecorderPreview;
+	private FrameLayout mRecorderPreview;
 
 	private SurfaceViewManager mSurfaceViewManager;
 
@@ -54,7 +53,7 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 		mSurfaceViewManager = new SurfaceViewManager(this, MEDIA_TYPE_RECORDER,
 				btAnimation);
 		recorder = mSurfaceViewManager.getMyMediaRecorder();
-		mRecorderPreview = (LinearLayout) findViewById(R.id.ll_recorder_preview);
+		mRecorderPreview = (FrameLayout) findViewById(R.id.fl_recorder_preview);
 		mRecorderPreview.addView(mSurfaceViewManager);
 	}
 
@@ -66,8 +65,7 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 
 			if (isRecording && recorder != null) {
 				isRecording = false;
-				mSurfaceViewManager.releaseMediaRecorder();
-				Toast.makeText(MediaRecorderActivity.this, "停止录像",
+				Toast.makeText(MediaRecorderActivity.this, "录制完成",
 						Toast.LENGTH_SHORT).show();
 				minute = 0;
 				second = 0;
@@ -75,7 +73,6 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 						R.drawable.img_recorder_record));
 			} else {
 				mSurfaceViewManager.startRecord();
-				recorder.start();
 				isRecording = true;
 				updateRecorderTimeThread();
 				Toast.makeText(MediaRecorderActivity.this, "视频录制中。。。",

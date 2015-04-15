@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -45,14 +46,10 @@ public class VideoActivity extends Activity implements OnClickListener,
 	private SeekBar mVideoSeekBar;
 	// 视频播放时间
 	private TextView mVideoTime;
-	// 上一个视频
-	private ImageButton mVideoPre;
 	// 播放视频
 	private ImageButton mVideoPlay;
-	// 下一个视频
-	private ImageButton mVideoNext;
 	// 视频播放界面
-	private LinearLayout mVideoView;
+	private FrameLayout mVideoView;
 
 	private LinearLayout llPlayLayout;
 
@@ -94,12 +91,8 @@ public class VideoActivity extends Activity implements OnClickListener,
 		mVideoSeekBar = (SeekBar) findViewById(R.id.seb_video);
 		mVideoSeekBar.setOnSeekBarChangeListener(change);
 		mVideoTime = (TextView) findViewById(R.id.tv_video_time);
-		mVideoPre = (ImageButton) findViewById(R.id.ibtn_video_pre);
-		mVideoPre.setOnClickListener(this);
 		mVideoPlay = (ImageButton) findViewById(R.id.ibtn_video_play);
 		mVideoPlay.setOnClickListener(this);
-		mVideoNext = (ImageButton) findViewById(R.id.ibtn_video_next);
-		mVideoNext.setOnClickListener(this);
 
 		windowInAnimation = AnimationUtils
 				.loadAnimation(this, R.anim.window_in);
@@ -111,7 +104,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 				filePath);
 		mediaPlayer = mSurfaceViewManager.getMyMediaPlayer();
 
-		mVideoView = (LinearLayout) findViewById(R.id.ll_vedio_view);
+		mVideoView = (FrameLayout) findViewById(R.id.fl_vedio_view);
 		mVideoView.setOnTouchListener(this);
 		mVideoView.addView(mSurfaceViewManager);
 
@@ -277,9 +270,6 @@ public class VideoActivity extends Activity implements OnClickListener,
 
 		switch (view.getId()) {
 
-		case R.id.ibtn_video_pre:
-
-			break;
 		case R.id.ibtn_video_play:
 
 			// 如果没有正在播放视频，则播放
@@ -293,9 +283,6 @@ public class VideoActivity extends Activity implements OnClickListener,
 				mVideoPlay.setImageDrawable(getResources().getDrawable(
 						R.drawable.img_video_pause));
 			}
-			break;
-		case R.id.ibtn_video_next:
-
 			break;
 		}
 	}

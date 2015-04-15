@@ -126,7 +126,6 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
-<<<<<<< HEAD
 		//开始拍照或录像
 		case R.id.action_activity_camera:
 			intentMedia.setClass(MediaFoldersActivity.this, CameraActivity.class);
@@ -136,13 +135,11 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			intentMedia.setClass(MediaFoldersActivity.this, MediaRecorderActivity.class);
 			startActivity(intentMedia);
 			break;
-=======
 		case R.id.action_search:
 			Intent intent = new Intent();
 			intent.setClass(MediaFoldersActivity.this,
 					SearchImageActivity.class);
 			MediaFoldersActivity.this.startActivity(intent);
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
 		default:
 			break;
 		}

@@ -86,15 +86,12 @@ public class MediaFoldersAdapter extends CursorAdapter {
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
 	}
 
-<<<<<<< HEAD
 	public String getFolderPath(int index) {
 		String path = getPath(index);
 		int pivot = path.lastIndexOf("//");
 		return path.substring(0, pivot);
 	}
 
-=======
->>>>>>> a65bcde83e5eff73e4e5b376cfdccd241e52eeb6
 	public String getBucketId(int index) {
 		Cursor c = getCursor();
 		c.moveToPosition(index);

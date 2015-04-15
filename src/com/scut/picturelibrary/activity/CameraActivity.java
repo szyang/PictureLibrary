@@ -1,21 +1,22 @@
 package com.scut.picturelibrary.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.animation.MyCameraButtonAnimation;
 import com.scut.picturelibrary.manager.SurfaceViewManager;
+
 /**
  * 拍照界面
+ * 
  * @author cyc
- *
+ * 
  */
 public class CameraActivity extends Activity implements OnClickListener {
 
@@ -28,7 +29,7 @@ public class CameraActivity extends Activity implements OnClickListener {
 	private ImageButton mCameraTake;
 	private ImageButton mCameraMore;
 	// 拍照预览
-	private LinearLayout mCameraPreview;
+	private FrameLayout mCameraPreview;
 
 	private SurfaceViewManager mSurfaceViewManager;
 
@@ -51,23 +52,23 @@ public class CameraActivity extends Activity implements OnClickListener {
 		// 传入第第二个参数为媒体类型，第三个参数为控件动画
 		mSurfaceViewManager = new SurfaceViewManager(this, MEDIA_TYPE_CAMERA,
 				btAnimation);
-		mCameraPreview = (LinearLayout) findViewById(R.id.ll_camera_preview);
+		mCameraPreview = (FrameLayout) findViewById(R.id.fl_camera_preview);
 		mCameraPreview.addView(mSurfaceViewManager);
 
 	}
 
 	@Override
 	public void onClick(View view) {
-		
+
 		switch (view.getId()) {
 		case R.id.ibtn_camera_back:
-            finish();
+			finish();
 			break;
 		case R.id.ibtn_camera_well:
 
 			break;
 		case R.id.ibtn_camera_album:
-            
+
 			break;
 		case R.id.ibtn_camera_take:
 			mSurfaceViewManager.takePhoto();
