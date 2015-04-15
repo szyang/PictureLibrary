@@ -167,11 +167,22 @@ public class MediaFilesActivity extends ActionBarActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
+		Intent intentMedia = new Intent();
 		switch (id) {// 根据选项进行排序
 		case R.id.action_sort_name:
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
+			// 开始拍照或录像
+		case R.id.action_activity_camera:
+			intentMedia.setClass(MediaFilesActivity.this, CameraActivity.class);
+			startActivity(intentMedia);
+			break;
+		case R.id.action_activity_recorder:
+			intentMedia.setClass(MediaFilesActivity.this,
+					MediaRecorderActivity.class);
+			startActivity(intentMedia);
+			break;
 		case R.id.action_search:
 			Intent intent = new Intent();
 			intent.setClass(MediaFilesActivity.this, SearchImageActivity.class);
