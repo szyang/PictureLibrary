@@ -22,9 +22,9 @@ import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -211,8 +211,8 @@ public class VideoActivity extends Activity implements OnClickListener,
 				float ratio = Math.max(wRatio, hRatio);
 				mVideoWidth = (int) Math.ceil((float) mVideoWidth / ratio);
 				mVideoHeight = (int) Math.ceil((float) mVideoHeight / ratio);
-				lpPortrait = new LayoutParams(mVideoWidth, mVideoHeight);
 			}
+			lpPortrait = new LayoutParams(mVideoWidth, mVideoHeight);
 		}
 		mSurfaceViewManager.setLayoutParams(lpPortrait);
 	}

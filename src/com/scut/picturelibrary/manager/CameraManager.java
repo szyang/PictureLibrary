@@ -104,6 +104,8 @@ public class CameraManager {
 		public void onPictureTaken(byte[] data, Camera camera) {
 
 			new savePictureTask().execute(data);
+			//拍完继续预览
+			mCamera.startPreview();
 		}
 	};
 

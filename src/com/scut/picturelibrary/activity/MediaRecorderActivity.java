@@ -8,14 +8,17 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.animation.MyRecorderButtonAnimation;
 import com.scut.picturelibrary.manager.SurfaceViewManager;
-
+/**
+ * 录像
+ * @author cyc
+ *
+ */
 public class MediaRecorderActivity extends Activity implements OnClickListener {
 
 	public final static int MEDIA_TYPE_RECORDER = 3;
@@ -64,6 +67,7 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 		case R.id.ibtn_recorder_record:
 
 			if (isRecording && recorder != null) {
+				mSurfaceViewManager.releaseMediaRecorder();
 				isRecording = false;
 				Toast.makeText(MediaRecorderActivity.this, "录制完成",
 						Toast.LENGTH_SHORT).show();
@@ -126,6 +130,13 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mSurfaceViewManager.releaseMediaRecorder();
+		mSurfaceViewManager.releaseCamera();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 		mSurfaceViewManager.releaseMediaRecorder();
 		mSurfaceViewManager.releaseCamera();
 	}
