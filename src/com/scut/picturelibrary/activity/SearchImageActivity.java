@@ -37,7 +37,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import cn.sharesdk.framework.ShareSDK;
@@ -54,6 +53,7 @@ import com.scut.picturelibrary.views.DialogManager;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class SearchImageActivity extends ActionBarActivity implements
 		LoaderCallbacks<Cursor> {
+
 	private GridView mGridView;
 	private MediaFilesAdapter mAdapter;
 	private final int LOAD_ID = 0x20150401;
@@ -180,9 +180,13 @@ public class SearchImageActivity extends ActionBarActivity implements
 		// 先转为jsonobject再获取数据；
 		{
 			thumbURL = ((JSONObject) jsonarray.get(i)).getString("thumbURL");
+
 			fromURL=((JSONObject)jsonarray.get(i)).getString("fromURL");
 			// 适配器中加上图片地址,适配器地址添加位置
 			Map<String,String> map = new HashMap<String, String>();
+
+			// 适配器中加上图片地址
+
 			map.put(InSimiGridViewAdapter.IMAGE_URL, thumbURL);
 			map.put(InSimiGridViewAdapter.FROM_URL, fromURL);
 			nAdapter.add(map);
