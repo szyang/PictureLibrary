@@ -1,6 +1,5 @@
 package com.scut.picturelibrary.views;
 
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,51 +21,65 @@ public class DialogManager {
 	private static Dialog mDialog;
 	private static Dialog nDialog;
 	private static ProgressDialog mProgressDialog;
-    private static TextView path_textview;
-    private static TextView time_textview;
-    private static TextView filesize_textview;
-    private static TextView size_textview;
-	public static void showImageItemMenuDialog(Context context, String title,String type,
-			DialogInterface.OnClickListener listener) {
+	private static TextView path_textview;
+	private static TextView time_textview;
+	private static TextView filesize_textview;
+	private static TextView size_textview;
+
+	public static void showImageItemMenuDialog(Context context, String title, DialogInterface.OnClickListener listener) {
 		dismissDialog();
 		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
 				context);
-	
 		// 设置对话框的标题
 		builder.setTitle(title);
-		builder.setItems(new String[] { "识图","分享","属性" }, listener);
+		builder.setItems(new String[] { "识图", "分享", "属性" }, listener);
 		// 创建一个列表对话框
 		mDialog = builder.create();
 		mDialog.show();
 	}
-public static void showImagePropertyDialog(Context context,String title,String path,String filesize,String size,String time)
-{//因为layout没被载入所以要获取布局文件对象
-	LayoutInflater inflater=LayoutInflater.from(context);
-	//不能导入android.R,ctrl+shift+o
-	View layout=inflater.inflate(R.layout.dialog_property, null);
-	android.app.AlertDialog.Builder builder_Property = new android.app.AlertDialog.Builder(
-		context);
-	path_textview=(TextView)layout.findViewById(R.id.path);
-	path_textview.setText(path);
-	time_textview=(TextView)layout.findViewById(R.id.time);
-	time_textview.setText(time);
-	filesize_textview=(TextView)layout.findViewById(R.id.filesize);
-	filesize_textview.setText(filesize);
-	size_textview=(TextView)layout.findViewById(R.id.size);
-	size_textview.setText(size);
-	builder_Property.setTitle(title).setView(layout).setPositiveButton("确定", new OnClickListener(){
 
-		@Override
-		public void onClick(DialogInterface arg0, int arg1) {
-			
-		}
-		
-	});
-nDialog=builder_Property.create();
-nDialog.show();
+	public static void showVideoItemMenuDialog(Context context, String title,
+			String type, DialogInterface.OnClickListener listener) {
+		dismissDialog();
+		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
+				context);
 
-}
+		// 设置对话框的标题
+		builder.setTitle(title);
+		builder.setItems(new String[] {"属性" }, listener);
+		// 创建一个列表对话框
+		mDialog = builder.create();
+		mDialog.show();
+	}
 
+	public static void showImagePropertyDialog(Context context, String title,
+			String path, String filesize, String size, String time) {// 因为layout没被载入所以要获取布局文件对象
+		LayoutInflater inflater = LayoutInflater.from(context);
+		// 不能导入android.R,ctrl+shift+o
+		View layout = inflater.inflate(R.layout.dialog_property, null);
+		android.app.AlertDialog.Builder builder_Property = new android.app.AlertDialog.Builder(
+				context);
+		path_textview = (TextView) layout.findViewById(R.id.path);
+		path_textview.setText(path);
+		time_textview = (TextView) layout.findViewById(R.id.time);
+		time_textview.setText(time);
+		filesize_textview = (TextView) layout.findViewById(R.id.filesize);
+		filesize_textview.setText(filesize);
+		size_textview = (TextView) layout.findViewById(R.id.size);
+		size_textview.setText(size);
+		builder_Property.setTitle(title).setView(layout)
+				.setPositiveButton("确定", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+
+					}
+
+				});
+		nDialog = builder_Property.create();
+		nDialog.show();
+
+	}
 
 	public static void showProgressDialog(Context context,
 			ProgressDialog.OnClickListener cancelListener) {
@@ -122,7 +135,5 @@ nDialog.show();
 			mProgressDialog = null;
 		}
 	}
-	
-
 
 }
