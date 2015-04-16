@@ -43,6 +43,9 @@ public class MediaRecorderManager {
 
 	@SuppressLint("InlinedApi")
 	public void startRecord(Camera camera, SurfaceHolder holder) {
+		if (mediaRecorder == null) {
+			mediaRecorder = new MediaRecorder();
+		}
 		camera.unlock();
 		mediaRecorder.setCamera(camera);
 		// 设置录音源
@@ -61,11 +64,9 @@ public class MediaRecorderManager {
 			mediaRecorder.prepare();
 			mediaRecorder.start();
 		} catch (IllegalStateException e) {
-			releaseMediaRecorder(camera);
-			return;
+			
 		} catch (IOException e) {
-			releaseMediaRecorder(camera);
-			return;
+		
 		}
 	}
 

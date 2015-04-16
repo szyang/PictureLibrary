@@ -165,8 +165,7 @@ public class SurfaceViewManager extends SurfaceView implements
 
 			break;
 		case 3:
-			releaseMediaRecorder();
-			releaseCamera();
+			
 			break;
 		}
 	}
