@@ -26,7 +26,7 @@ public class DialogManager {
     private static TextView time_textview;
     private static TextView filesize_textview;
     private static TextView size_textview;
-	public static void showImageItemMenuDialog(Context context, String title,
+	public static void showImageItemMenuDialog(Context context, String title,String type,
 			DialogInterface.OnClickListener listener) {
 		dismissDialog();
 		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
