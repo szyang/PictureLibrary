@@ -3,7 +3,6 @@ package com.scut.picturelibrary.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+import com.scut.picturelibrary.Constants;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.MediaFoldersAdapter;
 import com.scut.picturelibrary.loader.MediaFoldersCursorLoader;
@@ -41,10 +41,8 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 	 * GridView的适配器
 	 */
 	private MediaFoldersAdapter mAdapter;
-	private final String SORT_BY_NAME = MediaStore.Images.Media.BUCKET_DISPLAY_NAME;
-	private final String SORT_BY_DATE = MediaStore.Images.Media.DATE_MODIFIED;
 
-	private String mSort = SORT_BY_NAME;
+	private String mSort = Constants.BUCKET_SORT_DEFAULT;
 
 	private long mKeyTime;
 
@@ -101,9 +99,9 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		switch (id) {
 		// 根据选项进行排序
 		case R.id.action_sort_name:
-			return resort(SORT_BY_NAME);
+			return resort(Constants.SORT_BY_BUCKET_NAME);
 		case R.id.action_sort_date:
-			return resort(SORT_BY_DATE);
+			return resort(Constants.SORT_BY_DATE);
 			// 开始拍照或录像
 		case R.id.action_activity_camera:
 			intentMedia.setClass(MediaFoldersActivity.this,
