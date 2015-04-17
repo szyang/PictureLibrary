@@ -29,26 +29,28 @@ public class DialogManager {
 	private static TextView video_textview;
 	private static TextView video_name_textview;
 
-	public static void showImageItemMenuDialog(Context context, String title, DialogInterface.OnClickListener listener) {
+	public static void showImageItemMenuDialog(Context context, String title,
+			DialogInterface.OnClickListener listener) {
 		dismissDialog();
 		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
 				context);
 		// 设置对话框的标题
 		builder.setTitle(title);
-		builder.setItems(new String[] { "识图", "分享", "属性" }, listener);
+		builder.setItems(new String[] { "识图", "分享", "属性", "编辑" }, listener);
 		// 创建一个列表对话框
 		mDialog = builder.create();
 		mDialog.show();
 	}
 
-	public static void showVideoItemMenuDialog(Context context, String title, DialogInterface.OnClickListener listener) {
+	public static void showVideoItemMenuDialog(Context context, String title,
+			DialogInterface.OnClickListener listener) {
 		dismissDialog();
 		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
 				context);
 
 		// 设置对话框的标题
 		builder.setTitle(title);
-		builder.setItems(new String[] {"属性" }, listener);
+		builder.setItems(new String[] { "属性" }, listener);
 		// 创建一个列表对话框
 		mDialog = builder.create();
 		mDialog.show();
@@ -82,8 +84,10 @@ public class DialogManager {
 		nDialog.show();
 
 	}
+
 	public static void showVideoPropertyDialog(Context context, String title,
-			String path, String filesize, String size,String videotime ,String time) {// 因为layout没被载入所以要获取布局文件对象
+			String path, String filesize, String size, String videotime,
+			String time) {// 因为layout没被载入所以要获取布局文件对象
 		LayoutInflater inflater = LayoutInflater.from(context);
 		// 不能导入android.R,ctrl+shift+o
 		View layout = inflater.inflate(R.layout.dialog_property, null);
@@ -93,17 +97,17 @@ public class DialogManager {
 		size_textview = (TextView) layout.findViewById(R.id.size);
 		time_textview = (TextView) layout.findViewById(R.id.time);
 		filesize_textview = (TextView) layout.findViewById(R.id.filesize);
-		time_name_textview=(TextView) layout.findViewById(R.id.time_name);
-		video_textview=(TextView) layout.findViewById(R.id.video);
-		video_name_textview=(TextView) layout.findViewById(R.id.video_name);
+		time_name_textview = (TextView) layout.findViewById(R.id.time_name);
+		video_textview = (TextView) layout.findViewById(R.id.video);
+		video_name_textview = (TextView) layout.findViewById(R.id.video_name);
 		path_textview.setText(path);
 		time_textview.setText(videotime);
 		video_textview.setVisibility(View.VISIBLE);
 		video_name_textview.setVisibility(View.VISIBLE);
-	    video_textview.setText(time);
-        filesize_textview.setText(filesize);
-	    time_name_textview.setText("时长");
-        size_textview.setText(size);
+		video_textview.setText(time);
+		filesize_textview.setText(filesize);
+		time_name_textview.setText("时长");
+		size_textview.setText(size);
 		builder_Property.setTitle(title).setView(layout)
 				.setPositiveButton("确定", new OnClickListener() {
 
@@ -117,6 +121,7 @@ public class DialogManager {
 		nDialog.show();
 
 	}
+
 	public static void showProgressDialog(Context context,
 			ProgressDialog.OnClickListener cancelListener) {
 		dismissDialog();

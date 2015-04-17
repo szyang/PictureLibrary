@@ -172,6 +172,14 @@ public class MediaFilesActivity extends ActionBarActivity implements
 												filename, path, filesize, size,
 												time);
 										break;
+									case 3:
+										Intent it = new Intent();
+										it.setClass(MediaFilesActivity.this,
+												FilterActivity.class);
+										it.putExtra("uri", "file:///" + path);
+										MediaFilesActivity.this
+												.startActivity(it);
+										break;
 									default:
 										break;
 									}
