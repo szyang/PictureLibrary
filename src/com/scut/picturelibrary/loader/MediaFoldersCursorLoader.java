@@ -26,7 +26,7 @@ import com.scut.picturelibrary.utils.SortCursor;
 public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	final ForceLoadContentObserver mObserver;
 	@SuppressWarnings("unused")
-	private final static String TAG = "ImageVideoCursorLoader";
+	private final static String TAG = "MediaFoldersCursorLoader";
 
 	// Uri mUri;
 	String[] mImageProjection = new String[] {

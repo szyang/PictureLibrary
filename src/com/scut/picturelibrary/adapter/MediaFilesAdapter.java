@@ -6,17 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.provider.MediaStore;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
 
@@ -138,7 +139,6 @@ public class MediaFilesAdapter extends CursorAdapter {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 		}
@@ -148,12 +148,18 @@ public class MediaFilesAdapter extends CursorAdapter {
 	public String getImageSize(int index) {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
+		String path = c.getString(c
+				.getColumnIndex(MediaStore.Images.Media.DATA));
 		BitmapFactory.Options opts = new BitmapFactory.Options();
-		// 只获取图片尺寸不占用内存
 		opts.inJustDecodeBounds = true;
+		// 只获取图片尺寸不占用内存
+		BitmapFactory.decodeFile(path, opts);
 		int x = opts.outHeight;
 		int y = opts.outWidth;
-		return y + "x" + x;
+		if (x > y)
+			return x + "*" + y;
+		else
+			return y + "*" + x;
 	}
 
 	public String getType(int index) {
@@ -167,6 +173,58 @@ public class MediaFilesAdapter extends CursorAdapter {
 		c.moveToPosition(index);
 		return c.getString(c
 				.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
+	}
+
+	public String getVideoTime(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		String videotime = "";
+		// 获取电影时长
+		int VideoTime = c.getInt(c
+				.getColumnIndex(MediaStore.Video.Media.DURATION)) / 1000;
+		if (VideoTime < 60) {
+			videotime = VideoTime < 10 ? "00:0" + VideoTime : "00:" + VideoTime;
+		} else if (VideoTime < 3600) {
+			videotime = VideoTime - VideoTime / 60 * 60 < 10 ? (VideoTime / 60 < 10 ? "0"
+					+ VideoTime / 60 + ":0" + (VideoTime - VideoTime / 60 * 60)
+					: "0" + VideoTime / 60 + ":"
+							+ (VideoTime - VideoTime / 60 * 60))
+					: VideoTime / 60 + ":" + (VideoTime - VideoTime / 60 * 60);
+		} else {
+			String mintime = "";
+			int hour = VideoTime / 3600;
+			int MinTime = VideoTime - VideoTime / 3600 * 3600;
+			if (MinTime < 60) {
+				mintime = MinTime < 10 ? "00:0" + MinTime : "00:" + MinTime;
+			} else {
+				mintime = MinTime - MinTime / 60 * 60 < 10 ? (MinTime / 60 < 10 ? "0"
+						+ MinTime / 60 + ":0" + (MinTime - MinTime / 60 * 60)
+						: "0" + MinTime / 60 + ":"
+								+ (MinTime - MinTime / 60 * 60))
+						: MinTime / 60 + ":" + (MinTime - MinTime / 60 * 60);
+			}
+			videotime = hour < 10 ? "0" + hour + ":" + mintime : hour + ":"
+					+ mintime;
+		}
+		return videotime;
+
+	}
+
+	@SuppressLint("NewApi")
+	public String getVideoSize(int index) {
+		Cursor c = getCursor();
+		String path = c
+				.getString(c.getColumnIndex(MediaStore.Video.Media.DATA));
+		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+		retriever.setDataSource(path);
+		Bitmap bm = retriever.getFrameAtTime(1);
+		int x = bm.getWidth();
+		int y = bm.getHeight();
+		if (x > y)
+			return x + "*" + y;
+		else
+			return y + "*" + x;
+
 	}
 
 	/**
