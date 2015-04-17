@@ -2,7 +2,6 @@ package com.scut.picturelibrary.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -17,10 +16,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.adapter.MediaFoldersAdapter;
@@ -56,7 +52,6 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_folders);
-		initImageLoader();
 		// 初始化视图
 		initView();
 		// 设置监听器
@@ -71,24 +66,6 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 		mGridView.setAdapter(mAdapter);
 	}
 
-	private void initImageLoader() {
-		if (ImageLoader.getInstance().isInited()) {
-			return;
-		}
-		// 设置图片显示选项
-		DisplayImageOptions displayOp = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.bg_loading)// 图片正在加载时显示的背景
-				.cacheInMemory(true)// 缓存在内存中
-				.cacheOnDisk(true)// 缓存在磁盘中
-				.displayer(new FadeInBitmapDisplayer(400))// 显示渐变动画
-				.bitmapConfig(Bitmap.Config.RGB_565) // 设置图片的解码类型
-				.build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).defaultDisplayImageOptions(displayOp)
-				.denyCacheImageMultipleSizesInMemory().build();
-		ImageLoader.getInstance().init(config);
-	}
-
 	private void initListener() {
 		// 设置滚动时图片是否暂停加载的监听
 		PauseOnScrollListener listener = new PauseOnScrollListener(
@@ -99,9 +76,10 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				String bucketId = mAdapter.getBucketId(position);
-				mAdapter.getCursor().moveToPosition(position);
+				String bucketName = mAdapter.getBuckName(position);
 				Intent intent = new Intent();
 				intent.putExtra("bucketId", bucketId);
+				intent.putExtra("bucketName", bucketName);
 				intent.setClass(MediaFoldersActivity.this,
 						MediaFilesActivity.class);
 				MediaFoldersActivity.this.startActivity(intent);
@@ -126,13 +104,15 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 			return resort(SORT_BY_NAME);
 		case R.id.action_sort_date:
 			return resort(SORT_BY_DATE);
-		//开始拍照或录像
+			// 开始拍照或录像
 		case R.id.action_activity_camera:
-			intentMedia.setClass(MediaFoldersActivity.this, CameraActivity.class);
+			intentMedia.setClass(MediaFoldersActivity.this,
+					CameraActivity.class);
 			startActivity(intentMedia);
 			break;
 		case R.id.action_activity_recorder:
-			intentMedia.setClass(MediaFoldersActivity.this, MediaRecorderActivity.class);
+			intentMedia.setClass(MediaFoldersActivity.this,
+					MediaRecorderActivity.class);
 			startActivity(intentMedia);
 			break;
 		case R.id.action_search:
@@ -201,5 +181,5 @@ public class MediaFoldersActivity extends ActionBarActivity implements
 
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 }

@@ -54,6 +54,9 @@ public class MediaFilesActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_files);
+		// 设置Title为文件夹名
+		String bucketName = getIntent().getStringExtra("bucketName");
+		setTitle(bucketName);
 		// 进行cursorloader初始化
 		getSupportLoaderManager().initLoader(LOAD_ID, null, this);
 		// 初始化视图
@@ -119,22 +122,25 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				if (mAdapter.getType(position).equals("video")) {// 视频
 					final String VideoTime = mAdapter.getVideoTime(position);
 					final String size = mAdapter.getVideoSize(position);
-					DialogManager.showVideoItemMenuDialog(MediaFilesActivity.this, filename,
+					DialogManager.showVideoItemMenuDialog(
+							MediaFilesActivity.this, filename,
 							new DialogInterface.OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-						if(which==0)
-						{DialogManager.showVideoPropertyDialog(
-								MediaFilesActivity.this,
-								filename, path, filesize,size, VideoTime,
-								time);}
-									
-								}});
-					
+									if (which == 0) {
+										DialogManager.showVideoPropertyDialog(
+												MediaFilesActivity.this,
+												filename, path, filesize, size,
+												VideoTime, time);
+									}
+
+								}
+							});
+
 				} else { // 图片
-		
+
 					final String size = mAdapter.getImageSize(position);
 					DialogManager.showImageItemMenuDialog(
 							MediaFilesActivity.this, filename,
