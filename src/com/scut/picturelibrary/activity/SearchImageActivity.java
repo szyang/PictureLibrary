@@ -57,7 +57,7 @@ public class SearchImageActivity extends ActionBarActivity implements
 	private GridView mGridView;
 	private MediaFilesAdapter mAdapter;
 	private final int LOAD_ID = 0x20150401;
-	private String query = "20152015201520152015";
+	private String query = "";
 	private TabHost mtabhost;
 	private GridView nGridView;
 	private TextView textview;
@@ -107,24 +107,60 @@ public class SearchImageActivity extends ActionBarActivity implements
 				// TODO 点击显示完整图片or播放视频
 				// 目前是调用外部程序
 				String path = mAdapter.getPath(position);
-				Intent it = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse("file:///" + path);
 				if (mAdapter.getType(position).equals("video"))// 视频
-					it.setDataAndType(uri, "video/*");
+				{
+				Intent intent = new Intent();
+				intent.setClass(SearchImageActivity.this,
+						VideoActivity.class);
+				intent.putExtra("filePath", path);
+				startActivity(intent);}
 				else { // 图片
-					it.setDataAndType(uri, "image/*");
+					Intent it = new Intent();
+					int count = mAdapter.getCount();
+					String[] path_base = new String[count];
+					for (int i = 0; i < mAdapter.getCount(); i++) {
+						path_base[i] = mAdapter.getPath(i);
+					}
+
+					it.putExtra("path", path);
+					it.putExtra("uri", uri);
+					it.putExtra("position", position);
+					it.putExtra("count", count);
+					it.putExtra("path_all", path_base);
+					it.setClass(SearchImageActivity.this,
+							ImageViewActivity.class);
+					startActivity(it);
 				}
-				startActivity(it);
+		
 			}
 		});
 		mGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				final String filesize = mAdapter.getFileSize(position);
+				final String filename = mAdapter.getTitle(position);
+				final String path = mAdapter.getPath(position);
+				final String time = mAdapter.getTime(position);
 				if (mAdapter.getType(position).equals("video")) {// 视频
-				} else { // 图片
-					final String path = mAdapter.getPath(position);
-					final String filename = mAdapter.getTitle(position);
+					final String VideoTime = mAdapter.getVideoTime(position);
+					final String size = mAdapter.getVideoSize(position);
+					DialogManager.showVideoItemMenuDialog(SearchImageActivity.this, filename,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+						if(which==0)
+						{DialogManager.showVideoPropertyDialog(
+								SearchImageActivity.this,
+								filename, path, filesize,size, VideoTime,
+								time);}
+									
+								}});}
+					
+				else { // 图片
+					final String size = mAdapter.getImageSize(position);
 					DialogManager.showImageItemMenuDialog(
 							SearchImageActivity.this, filename,
 							new DialogInterface.OnClickListener() {
@@ -145,6 +181,12 @@ public class SearchImageActivity extends ActionBarActivity implements
 									case 1:
 										showShare(path);
 										break;
+									case 2:
+										DialogManager.showImagePropertyDialog(
+												SearchImageActivity.this,
+												filename, path, filesize, size,
+												time);
+										break;
 									default:
 										break;
 									}
@@ -154,21 +196,41 @@ public class SearchImageActivity extends ActionBarActivity implements
 				return false;
 			}
 		});
+		nGridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				// TODO 点击显示大图，画廊浏览
+				Intent intent = new Intent();
+				intent.setAction(Intent.ACTION_VIEW);
+				Uri content_url = Uri.parse(nAdapter.getFromURL(position));
+				intent.setData(content_url);
+				startActivity(intent);
+			}
+		});
 	}
 
 	// 显示网络图片
 	private void displayImage(JSONObject json) throws JSONException {
 		// 从网页返回的json取data数组
 		String thumbURL;
+		String fromURL;
 		JSONArray jsonarray = json.getJSONArray("data");
 		// 获取data数组中的缩略图地址
 		for (int i = 0; i < jsonarray.length(); i++)
 		// 先转为jsonobject再获取数据；
 		{
 			thumbURL = ((JSONObject) jsonarray.get(i)).getString("thumbURL");
+
+			fromURL=((JSONObject)jsonarray.get(i)).getString("fromURL");
+			// 适配器中加上图片地址,适配器地址添加位置
+			Map<String,String> map = new HashMap<String, String>();
+
 			// 适配器中加上图片地址
-			Map<String, String> map = new HashMap<String, String>();
+
 			map.put(InSimiGridViewAdapter.IMAGE_URL, thumbURL);
+			map.put(InSimiGridViewAdapter.FROM_URL, fromURL);
 			nAdapter.add(map);
 		}
 		nAdapter.notifyDataSetChanged();
@@ -247,14 +309,7 @@ public class SearchImageActivity extends ActionBarActivity implements
 				return false;
 			}
 		});
-		searchView
-				.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-					@Override
-					public void onFocusChange(View view, boolean focus) {
-						if (!focus) {// searchView.setIconified(true);
-						}
-					}
-				});
+
 		return true;
 	}
 

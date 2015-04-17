@@ -112,12 +112,29 @@ public class MediaFilesActivity extends ActionBarActivity implements
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				final String filesize = mAdapter.getFileSize(position);
+				final String filename = mAdapter.getTitle(position);
+				final String path = mAdapter.getPath(position);
+				final String time = mAdapter.getTime(position);
 				if (mAdapter.getType(position).equals("video")) {// 视频
+					final String VideoTime = mAdapter.getVideoTime(position);
+					final String size = mAdapter.getVideoSize(position);
+					DialogManager.showVideoItemMenuDialog(MediaFilesActivity.this, filename,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+						if(which==0)
+						{DialogManager.showVideoPropertyDialog(
+								MediaFilesActivity.this,
+								filename, path, filesize,size, VideoTime,
+								time);}
+									
+								}});
+					
 				} else { // 图片
-					final String path = mAdapter.getPath(position);
-					final String time = mAdapter.getTime(position);
-					final String filesize = mAdapter.getFileSize(position);
-					final String filename = mAdapter.getTitle(position);
+		
 					final String size = mAdapter.getImageSize(position);
 					DialogManager.showImageItemMenuDialog(
 							MediaFilesActivity.this, filename,
