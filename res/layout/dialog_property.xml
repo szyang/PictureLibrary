@@ -89,5 +89,28 @@
     android:singleLine="false"
     android:width="230dp" 
     />
-
+<TextView 
+    android:id="@+id/video_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/time"
+    android:layout_marginLeft="10dp"
+       android:layout_marginTop="5dp"
+    android:textSize="17dp"
+    android:visibility="invisible"
+    android:text="时间"    
+    />
+<TextView 
+    android:id="@+id/video"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/video_name"
+    android:layout_below="@+id/time"
+    android:layout_marginLeft="15dp"
+       android:layout_marginTop="5dp"
+     android:textSize="17dp"
+    android:singleLine="false"
+        android:visibility="invisible"
+    android:width="230dp" 
+    />
 </RelativeLayout>

@@ -25,6 +25,9 @@ public class DialogManager {
 	private static TextView time_textview;
 	private static TextView filesize_textview;
 	private static TextView size_textview;
+	private static TextView time_name_textview;
+	private static TextView video_textview;
+	private static TextView video_name_textview;
 
 	public static void showImageItemMenuDialog(Context context, String title, DialogInterface.OnClickListener listener) {
 		dismissDialog();
@@ -38,8 +41,7 @@ public class DialogManager {
 		mDialog.show();
 	}
 
-	public static void showVideoItemMenuDialog(Context context, String title,
-			String type, DialogInterface.OnClickListener listener) {
+	public static void showVideoItemMenuDialog(Context context, String title, DialogInterface.OnClickListener listener) {
 		dismissDialog();
 		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
 				context);
@@ -80,7 +82,41 @@ public class DialogManager {
 		nDialog.show();
 
 	}
+	public static void showVideoPropertyDialog(Context context, String title,
+			String path, String filesize, String size,String videotime ,String time) {// 因为layout没被载入所以要获取布局文件对象
+		LayoutInflater inflater = LayoutInflater.from(context);
+		// 不能导入android.R,ctrl+shift+o
+		View layout = inflater.inflate(R.layout.dialog_property, null);
+		android.app.AlertDialog.Builder builder_Property = new android.app.AlertDialog.Builder(
+				context);
+		path_textview = (TextView) layout.findViewById(R.id.path);
+		size_textview = (TextView) layout.findViewById(R.id.size);
+		time_textview = (TextView) layout.findViewById(R.id.time);
+		filesize_textview = (TextView) layout.findViewById(R.id.filesize);
+		time_name_textview=(TextView) layout.findViewById(R.id.time_name);
+		video_textview=(TextView) layout.findViewById(R.id.video);
+		video_name_textview=(TextView) layout.findViewById(R.id.video_name);
+		path_textview.setText(path);
+		time_textview.setText(videotime);
+		video_textview.setVisibility(View.VISIBLE);
+		video_name_textview.setVisibility(View.VISIBLE);
+	    video_textview.setText(time);
+        filesize_textview.setText(filesize);
+	    time_name_textview.setText("时长");
+        size_textview.setText(size);
+		builder_Property.setTitle(title).setView(layout)
+				.setPositiveButton("确定", new OnClickListener() {
 
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+
+					}
+
+				});
+		nDialog = builder_Property.create();
+		nDialog.show();
+
+	}
 	public static void showProgressDialog(Context context,
 			ProgressDialog.OnClickListener cancelListener) {
 		dismissDialog();
