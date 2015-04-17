@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,6 +73,8 @@ public class VideoActivity extends Activity implements OnClickListener,
 	private LayoutParams lpPortrait;
 	// 横屏缩放布局
 	private LayoutParams lpLandscape;
+	//视频布局
+	private LayoutParams lpVideoView;
 	// 声音管理器
 	private AudioManager am;
 
@@ -105,6 +108,9 @@ public class VideoActivity extends Activity implements OnClickListener,
 		mediaPlayer = mSurfaceViewManager.getMyMediaPlayer();
 
 		mVideoView = (FrameLayout) findViewById(R.id.fl_vedio_view);
+		//使视频居中显示
+		lpVideoView.gravity = Gravity.CENTER;
+		mVideoView.setLayoutParams(lpVideoView);
 		mVideoView.setOnTouchListener(this);
 		mVideoView.addView(mSurfaceViewManager);
 
@@ -337,7 +343,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 				break;
 			// 长时间失去了这个音频的焦点
 			case AudioManager.AUDIOFOCUS_LOSS:
-				if (mediaPlayer.isPlaying()) {
+				if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 					mediaPlayer.stop();
 					mediaPlayer.release();
 					mediaPlayer = null;
@@ -346,13 +352,13 @@ public class VideoActivity extends Activity implements OnClickListener,
 				break;
 			// 暂时的失去了音频的焦点,但是应该要马上回到焦点上
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-				if (mediaPlayer.isPlaying()) {
+				if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 					mediaPlayer.pause();
 				}
 				break;
 			// 暂时的失去了音频的焦点,但是你允许继续用小音量播放音频
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-				if (mediaPlayer.isPlaying()) {
+				if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 					mediaPlayer.setVolume(0.1f, 0.1f);
 				}
 				break;
