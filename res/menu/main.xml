@@ -2,20 +2,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.scut.picturelibrary.MainActivity" >
-  <item
-        android:id="@+id/action_search"
-        android:title="@string/search"
-        android:icon="@drawable/search"
-        app:showAsAction="always"
-        />    <item
-        android:id="@+id/action_sort_name"
-        android:orderInCategory="100"
-        android:title="@string/sort_name"
-        app:showAsAction="never"/>
+
     <item
-        android:id="@+id/action_sort_date"
-        android:orderInCategory="100"
-        android:title="@string/sort_date"
-        app:showAsAction="never"/>
+        android:id="@+id/action_overflow"
+        android:icon="@drawable/img_action_overflow"
+        android:title="@string/action_media"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_activity_camera"
+                android:title="@string/activity_camera"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/action_activity_recorder"
+                android:title="@string/activity_recorder"
+                app:showAsAction="ifRoom"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/img_action_search"
+        android:title="@string/action_search"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/img_action_sort"
+        android:title="@string/action_sort"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_sort_name"
+                android:title="@string/sort_name"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/action_sort_date"
+                android:title="@string/sort_date"
+                app:showAsAction="ifRoom"/>
+        </menu>
+    </item>
 
 </menu>

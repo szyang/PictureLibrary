@@ -11,17 +11,19 @@ import android.widget.ImageButton;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.animation.MyCameraButtonAnimation;
 import com.scut.picturelibrary.manager.SurfaceViewManager;
+
 /**
  * 拍照界面
+ * 
  * @author cyc
- *
+ * 
  */
 public class CameraActivity extends Activity implements OnClickListener {
 
 	public final static int MEDIA_TYPE_CAMERA = 1;
 
-	// 拍照界面的按钮，主页、分割线、相册、拍照、更多
-	private ImageButton mCameraHome;
+	// 拍照界面的按钮，返回、分割线、相册、拍照、更多
+	private ImageButton mCameraBack;
 	private ImageButton mCameraWell;
 	private ImageButton mCameraAlbum;
 	private ImageButton mCameraTake;
@@ -37,8 +39,8 @@ public class CameraActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
 
-		mCameraHome = (ImageButton) findViewById(R.id.ibtn_camera_home);
-		mCameraHome.setOnClickListener(this);
+		mCameraBack = (ImageButton) findViewById(R.id.ibtn_camera_back);
+		mCameraBack.setOnClickListener(this);
 		mCameraWell = (ImageButton) findViewById(R.id.ibtn_camera_well);
 		mCameraWell.setOnClickListener(this);
 		mCameraAlbum = (ImageButton) findViewById(R.id.ibtn_camera_album);
@@ -57,9 +59,10 @@ public class CameraActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		switch (view.getId()) {
-		case R.id.ibtn_camera_home:
 
+		switch (view.getId()) {
+		case R.id.ibtn_camera_back:
+			finish();
 			break;
 		case R.id.ibtn_camera_well:
 
@@ -80,7 +83,7 @@ public class CameraActivity extends Activity implements OnClickListener {
 	private MyCameraButtonAnimation btAnimation = new MyCameraButtonAnimation() {
 		@Override
 		public void executeAnimation(Animation animation) {
-			mCameraHome.startAnimation(animation);
+			mCameraBack.startAnimation(animation);
 			mCameraWell.startAnimation(animation);
 			mCameraAlbum.startAnimation(animation);
 			mCameraTake.startAnimation(animation);
@@ -88,5 +91,5 @@ public class CameraActivity extends Activity implements OnClickListener {
 
 		}
 	};
-
+	
 }

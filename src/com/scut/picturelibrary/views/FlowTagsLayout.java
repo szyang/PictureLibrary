@@ -11,8 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
+import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 /**
  * 自定义流式标签布局
@@ -21,14 +21,14 @@ import android.widget.ArrayAdapter;
  * 
  */
 @SuppressLint("ClickableViewAccessibility")
-public class FlowTagsLayout extends AdapterView<ArrayAdapter<?>> implements
+public class FlowTagsLayout extends AdapterView<Adapter> implements
 		OnTouchListener {
 
 	// save all tags
 	private List<List<View>> mAllTags = new ArrayList<List<View>>();
 	private List<Integer> mLineHeight = new ArrayList<Integer>();
 
-	private ArrayAdapter<?> mAdapter;
+	private Adapter mAdapter;
 	private DataSetObserver mDataSetObserver;
 
 	// click listener
@@ -105,6 +105,8 @@ public class FlowTagsLayout extends AdapterView<ArrayAdapter<?>> implements
 				: sizeHeight);
 	}
 
+	List<View> lineViews = new ArrayList<View>();
+
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		mAllTags.clear();
@@ -114,7 +116,7 @@ public class FlowTagsLayout extends AdapterView<ArrayAdapter<?>> implements
 		int lineWidth = 0;
 		int lineHeight = 0;
 
-		List<View> lineViews = new ArrayList<View>();
+		lineViews.clear();
 
 		int cCount = getChildCount();
 		for (int i = 0; i < cCount; i++) {
@@ -187,7 +189,7 @@ public class FlowTagsLayout extends AdapterView<ArrayAdapter<?>> implements
 	}
 
 	@Override
-	public ArrayAdapter<?> getAdapter() {
+	public Adapter getAdapter() {
 		return mAdapter;
 	}
 
@@ -214,7 +216,7 @@ public class FlowTagsLayout extends AdapterView<ArrayAdapter<?>> implements
 	}
 
 	@Override
-	public void setAdapter(ArrayAdapter<?> adapter) {
+	public void setAdapter(Adapter adapter) {
 		if (mAdapter != null && mDataSetObserver != null) {
 			// listen data set changed
 			mAdapter.unregisterDataSetObserver(mDataSetObserver);
