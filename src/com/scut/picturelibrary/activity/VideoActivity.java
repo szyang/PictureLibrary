@@ -145,26 +145,35 @@ public class VideoActivity extends Activity implements OnClickListener,
 		});
 	}
 
+	Runnable mUpdateSeeekBarHandler = new Runnable() {
+
+		@Override
+		public void run() {
+
+		}
+	};
+
 	// 更新seekbar和时间
 	private void updateSeekBarThread() {
-		new Thread() {
-
-			@Override
-			public void run() {
-				while (mediaPlayer != null && mediaPlayer.isPlaying()) {
-					try {
-						currentTime = mediaPlayer.getCurrentPosition();
-						Message msg = new Message();
-						msg.what = currentTime;
-						handler.sendMessage(msg);
-						sleep(1000);
-					} catch (Exception e) {
-
-					}
-				}
-			}
-
-		}.start();
+		handler.post(null);
+		// new Thread() {
+		//
+		// @Override
+		// public void run() {
+		// while (mediaPlayer != null && mediaPlayer.isPlaying()) {
+		// try {
+		// currentTime = mediaPlayer.getCurrentPosition();
+		// Message msg = new Message();
+		// msg.what = currentTime;
+		// handler.sendMessage(msg);
+		// sleep(1000);
+		// } catch (Exception e) {
+		//
+		// }
+		// }
+		// }
+		//
+		// }.start();
 	}
 
 	private static class MyHandler extends Handler {
@@ -176,20 +185,26 @@ public class VideoActivity extends Activity implements OnClickListener,
 
 		public void handleMessage(Message msg) {
 			VideoActivity act = wp.get();
-			if (act.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-				act.setOrientationVideoLayout(act.mediaPlayer); // 竖屏情况下的缩放
-			} else {
-				if (act.lpLandscape == null) {
-					act.lpLandscape = new LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.MATCH_PARENT);
+			if (act == null)
+				return;
+			if (act.mediaPlayer != null) {
+				if (act.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+					act.setOrientationVideoLayout(act.mediaPlayer); // 竖屏情况下的缩放
+				} else {
+					if (act.lpLandscape == null) {
+						act.lpLandscape = new LayoutParams(
+								LayoutParams.MATCH_PARENT,
+								LayoutParams.MATCH_PARENT);
+					}
+					// 横屏则不缩放
+					act.mSurfaceViewManager.setLayoutParams(act.lpLandscape);
 				}
-				// 横屏则不缩放
-				act.mSurfaceViewManager.setLayoutParams(act.lpLandscape);
+				int curTime = act.mediaPlayer.getCurrentPosition();
+				act.mVideoSeekBar.setProgress(curTime);
+				act.mVideoTime.setText(act.mSurfaceViewManager
+						.ShowTime(curTime));
+				act.handler.postDelayed(null, 1000);
 			}
-
-			act.mVideoSeekBar.setProgress(msg.what);
-			act.mVideoTime.setText(act.mSurfaceViewManager.ShowTime(msg.what));
 
 		}
 	}
@@ -252,7 +267,8 @@ public class VideoActivity extends Activity implements OnClickListener,
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
 			int progress = seekBar.getProgress();
-			mediaPlayer.seekTo(progress);
+			if (mediaPlayer != null)
+				mediaPlayer.seekTo(progress);
 		}
 
 		@Override
