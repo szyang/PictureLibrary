@@ -92,6 +92,11 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
+        <activity
+            android:name="com.scut.picturelibrary.activity.FilterActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
     </application>
 
 </manifest>

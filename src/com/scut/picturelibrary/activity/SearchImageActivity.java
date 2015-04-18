@@ -198,6 +198,14 @@ public class SearchImageActivity extends ActionBarActivity implements
 												filename, path, filesize, size,
 												time);
 										break;
+									case 3:
+										Intent it = new Intent();
+										it.setClass(SearchImageActivity.this,
+												FilterActivity.class);
+										it.putExtra("uri", "file:///" + path);
+										SearchImageActivity.this
+												.startActivity(it);
+										break;
 									default:
 										break;
 									}
