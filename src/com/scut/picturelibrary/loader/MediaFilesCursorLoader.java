@@ -118,11 +118,12 @@ public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
 		// mUri = uri;
 		mProjection = projection;
 		mImageProjection = new String[projection.length + 1];
-		mVideoProjection = new String[projection.length + 1];
+		mVideoProjection = new String[projection.length + 2];
 		for (int i = 0; i < projection.length; i++) {
 			mImageProjection[i] = projection[i];
 			mVideoProjection[i] = projection[i];
 		}
+		mVideoProjection[projection.length+1] = "duration";
 		mImageProjection[projection.length] = "'image' as type";
 		mVideoProjection[projection.length] = "'video' as type";
 		mSelection = selection;
