@@ -43,6 +43,14 @@ public class FilterActivity extends Activity {
 
 		mReviewImageView = (ImageView) findViewById(R.id.img_filter_review);
 
+		findViewById(R.id.btn_filter_cancel).setOnClickListener(
+				new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						finish();
+					}
+				});
+
 		ImageLoader.getInstance().displayImage(uri, mReviewImageView, null,
 				new ImageLoadingListener() {
 
@@ -68,7 +76,7 @@ public class FilterActivity extends Activity {
 					}
 				});
 
-		ViewGroup vp = (ViewGroup) findViewById(R.id.hscrollview_filter_btns);
+		ViewGroup vp = (ViewGroup) findViewById(R.id.ll_filter_filters);
 		for (int i = 0; i < vp.getChildCount(); i++) {
 			vp.getChildAt(i).setOnClickListener(mOnClickListener);
 		}
@@ -109,22 +117,19 @@ public class FilterActivity extends Activity {
 		protected ImageData doInBackground(Integer... ids) {
 			ImageData imageData = originData.clone();
 			switch (ids[0]) {
-			case R.id.btn_filter_originPhoto:// 原图
-				// imageData = originData;
+			case R.id.btn_filter_origin:// 原图
+				imageData = originData;
 				break;
-			case R.id.btn_filter_black_white:// 黑白
-				imageData = ImageFilter.whiteBlackFilter(imageData);
+			case R.id.btn_filter_blackWhite:// 黑白
+				imageData = ImageFilter.comicFilter(imageData);
 				break;
 			case R.id.btn_filter_brightContrast:// 高亮对比度
 				imageData = ImageFilter.brightContrastFilter(imageData);
 				break;
-			case R.id.btn_filter_comic:// 动漫
-				imageData = ImageFilter.comicFilter(imageData);
-				break;
 			case R.id.btn_filter_feather:// 羽化
 				imageData = ImageFilter.featherFilter(imageData);
 				break;
-			case R.id.btn_filter_oldPhoto:// 老照片
+			case R.id.btn_fliter_oldPhoto:// 老照片
 				imageData = ImageFilter.oldPhotoFilter(imageData);
 				break;
 			default:
