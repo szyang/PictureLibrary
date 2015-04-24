@@ -8,10 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 
@@ -24,7 +26,9 @@ import com.scut.picturelibrary.utils.SortCursor;
  * 
  */
 public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
+
 	final ForceLoadContentObserver mObserver;
+
 	@SuppressWarnings("unused")
 	private final static String TAG = "MediaFoldersCursorLoader";
 
@@ -118,6 +122,8 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 			return cursor;
 		}
 		cursor = new MergeCursor(new Cursor[] { imageCursor, videoCursor });
+		// 清空set集合
+		mFoldersSet.clear();
 		// 合并重复的视频和图片文件夹
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 			FolderObj obj = new FolderObj();
@@ -205,6 +211,7 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	 */
 	public MediaFoldersCursorLoader(Context context) {
 		super(context);
+		registerDb(context);
 		mObserver = new ForceLoadContentObserver();
 	}
 
@@ -216,8 +223,35 @@ public class MediaFoldersCursorLoader extends AsyncTaskLoader<Cursor> {
 	 */
 	public MediaFoldersCursorLoader(Context context, String sortOrder) {
 		super(context);
+		registerDb(context);
 		mObserver = new ForceLoadContentObserver();
 		mSortOrder = sortOrder;
+	}
+
+	/**
+	 * 绑定图片视频系统数据库监听
+	 * 
+	 * @param context
+	 */
+	private void registerDb(Context context) {
+		context.getContentResolver().registerContentObserver(
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
+				new ContentObserver(new Handler()) {
+					@Override
+					public void onChange(boolean selfChange) {
+						// 数据发生了变化 重新载入cursor
+						MediaFoldersCursorLoader.this.reset();
+					}
+				});
+		context.getContentResolver().registerContentObserver(
+				MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
+				new ContentObserver(new Handler()) {
+					@Override
+					public void onChange(boolean selfChange) {
+						// 数据发生了变化 重新载入cursor
+						MediaFoldersCursorLoader.this.reset();
+					}
+				});
 	}
 
 	/**

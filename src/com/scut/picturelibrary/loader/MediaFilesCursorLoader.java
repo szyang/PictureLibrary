@@ -5,9 +5,11 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 
@@ -20,9 +22,11 @@ import com.scut.picturelibrary.utils.SortCursor;
  * 
  */
 public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
+
 	final ForceLoadContentObserver mObserver;
+
 	@SuppressWarnings("unused")
-	private final static String TAG = "ImageVideoCursorLoader";
+	private final static String TAG = "MediaFilesCursorLoader";
 
 	// Uri mUri;
 	String[] mProjection;
@@ -103,6 +107,33 @@ public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
 	public MediaFilesCursorLoader(Context context) {
 		super(context);
 		mObserver = new ForceLoadContentObserver();
+		registerDb(context);
+	}
+
+	/**
+	 * 绑定图片视频系统数据库监听
+	 * 
+	 * @param context
+	 */
+	private void registerDb(Context context) {
+		context.getContentResolver().registerContentObserver(
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
+				new ContentObserver(new Handler()) {
+					@Override
+					public void onChange(boolean selfChange) {
+						// 数据发生了变化 重新载入cursor
+						MediaFilesCursorLoader.this.reset();
+					}
+				});
+		context.getContentResolver().registerContentObserver(
+				MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
+				new ContentObserver(new Handler()) {
+					@Override
+					public void onChange(boolean selfChange) {
+						// 数据发生了变化 重新载入cursor
+						MediaFilesCursorLoader.this.reset();
+					}
+				});
 	}
 
 	/**
@@ -114,6 +145,7 @@ public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
 	public MediaFilesCursorLoader(Context context, String[] projection,
 			String selection, String[] selectionArgs, String sortOrder) {
 		super(context);
+		registerDb(context);
 		mObserver = new ForceLoadContentObserver();
 		// mUri = uri;
 		mProjection = projection;
@@ -123,7 +155,7 @@ public class MediaFilesCursorLoader extends AsyncTaskLoader<Cursor> {
 			mImageProjection[i] = projection[i];
 			mVideoProjection[i] = projection[i];
 		}
-		mVideoProjection[projection.length+1] = "duration";
+		mVideoProjection[projection.length + 1] = "duration";
 		mImageProjection[projection.length] = "'image' as type";
 		mVideoProjection[projection.length] = "'video' as type";
 		mSelection = selection;
