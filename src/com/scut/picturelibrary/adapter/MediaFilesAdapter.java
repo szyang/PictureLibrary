@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.scut.picturelibrary.R;
 
@@ -96,6 +97,12 @@ public class MediaFilesAdapter extends CursorAdapter {
 		Cursor c = getCursor();
 		c.moveToPosition(index);
 		return c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+	}
+
+	public String getId(int index) {
+		Cursor c = getCursor();
+		c.moveToPosition(index);
+		return c.getString(c.getColumnIndex(MediaStore.Images.Media._ID));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -210,7 +217,6 @@ public class MediaFilesAdapter extends CursorAdapter {
 
 	}
 
-	@SuppressLint("NewApi")
 	public String getVideoSize(int index) {
 		Cursor c = getCursor();
 		String path = c

@@ -19,4 +19,5 @@ public class Constants {
 
 	public static String IMAGE_URLS = "com.scut.picturelibrary.IMAGE_URLS";
 	public static String IMAGE_POSITION = "com.scut.picturelibrary.IMAGE_POSITION";
+	
 }

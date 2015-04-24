@@ -3,7 +3,6 @@ package com.scut.picturelibrary.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
-import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.onekeyshare.OnekeyShare;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
@@ -38,7 +35,7 @@ import com.scut.picturelibrary.views.DialogManager;
 public class MediaFilesActivity extends ActionBarActivity implements
 		LoaderCallbacks<Cursor> {
 	/**
-	 * 用于展示文件夹的GridView
+	 * 用于展示文件夹内部所有文件的GridView
 	 */
 	private GridView mGridView;
 	private final int LOAD_ID = 0x20150405;
@@ -80,8 +77,7 @@ public class MediaFilesActivity extends ActionBarActivity implements
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// TODO 点击显示完整图片or播放视频
-				// 目前是调用外部程序
+				// 点击显示完整图片or播放视频
 				String path = mAdapter.getPath(position);
 				if (mAdapter.getType(position).equals("video")) {// 视频
 					Intent intent = new Intent();
@@ -96,7 +92,8 @@ public class MediaFilesActivity extends ActionBarActivity implements
 					int curPositonForImage = position;
 					for (int i = 0; i < mAdapter.getCount(); i++) {
 						if (mAdapter.getType(i).equals("image")) {
-							pathList.add("file:///" + mAdapter.getPath(i));
+							pathList.add("content://media/external/images/media/"
+									+ mAdapter.getId(i));
 						} else if (i < position) {// 存在视频且该视频在本图片前方
 							curPositonForImage -= 1;
 						}
@@ -123,69 +120,19 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				final String path = mAdapter.getPath(position);
 				final String time = mAdapter.getTime(position);
 				if (mAdapter.getType(position).equals("video")) {// 视频
-					final String VideoTime = mAdapter.getVideoTime(position);
+					final String videoTime = mAdapter.getVideoTime(position);
 					final String size = mAdapter.getVideoSize(position);
+					// 显示视频长按菜单
 					DialogManager.showVideoItemMenuDialog(
-							MediaFilesActivity.this, filename,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									if (which == 0) {
-										DialogManager.showVideoPropertyDialog(
-												MediaFilesActivity.this,
-												filename, path, filesize, size,
-												VideoTime, time);
-									}
-
-								}
-							});
+							MediaFilesActivity.this, filename, filename, path,
+							filesize, size, videoTime, time);
 
 				} else { // 图片
-
 					final String size = mAdapter.getImageSize(position);
+					// 显示图片长按菜单
 					DialogManager.showImageItemMenuDialog(
-							MediaFilesActivity.this, filename,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									switch (which) {
-									case 0:
-										Intent intent = new Intent();
-										intent.setClass(
-												MediaFilesActivity.this,
-												RecognizeImageActivity.class);
-										intent.putExtra("path", path);
-										intent.putExtra("filename", filename);
-										MediaFilesActivity.this
-												.startActivity(intent);
-										break;
-									case 1:
-										showShare(path);
-										break;
-									case 2:
-										DialogManager.showImagePropertyDialog(
-												MediaFilesActivity.this,
-												filename, path, filesize, size,
-												time);
-										break;
-									case 3:
-										Intent it = new Intent();
-										it.setClass(MediaFilesActivity.this,
-												FilterActivity.class);
-										it.putExtra("uri", "file:///" + path);
-										MediaFilesActivity.this
-												.startActivity(it);
-										break;
-									default:
-										break;
-									}
-
-								}
-							});
+							MediaFilesActivity.this, filename, filename, path,
+							filesize, size, time);
 				}
 				return false;
 			}
@@ -279,32 +226,5 @@ public class MediaFilesActivity extends ActionBarActivity implements
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// 取消cursor
 		mAdapter.swapCursor(null);
-	}
-
-	private void showShare(String path) {
-		ShareSDK.initSDK(this);
-		OnekeyShare oks = new OnekeyShare();
-		// 关闭sso授权
-		oks.disableSSOWhenAuthorize();
-
-		// 分享时Notification的图标和文字 2.5.9以后的版本不调用此方法
-		// oks.setNotification(R.drawable.ic_launcher,
-		// getString(R.string.app_name));
-		// title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-		oks.setTitle(getString(R.string.share));
-		// titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-		oks.setTitleUrl("www.baidu.com");
-		// imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-		oks.setImagePath(path);// 确保SDcard下面存在此张图片
-		// url仅在微信（包括好友和朋友圈）中使用
-		oks.setUrl("http://sharesdk.cn");
-		// comment是我对这条分享的评论，仅在人人网和QQ空间使用
-		oks.setComment("我是测试评论文本");
-		// site是分享此内容的网站名称，仅在QQ空间使用
-		oks.setSite(getString(R.string.app_name));
-		// siteUrl是分享此内容的网站地址，仅在QQ空间使用
-		oks.setSiteUrl("www.baidu.com");
-		// 启动分享GUI
-		oks.show(this);
 	}
 }

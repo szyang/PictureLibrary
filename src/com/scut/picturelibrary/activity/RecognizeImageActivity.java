@@ -96,7 +96,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		mFileName = intent.getStringExtra("filename");
 
 		setTitle(mFileName);
-		
+
 		taskCollection = new HashSet<GetWorkerTask>();
 		mUploadedTable = new UploadedFileTableUtil(this);
 
@@ -134,7 +134,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v,
 					int position, long id) {
-				// TODO 点击显示大图，画廊浏览
+				// 点击使用浏览器浏览
 				Intent intent = new Intent();
 				intent.setAction(Intent.ACTION_VIEW);
 				Uri content_url = Uri.parse(mSimiAdapter.getFromURL(position));
