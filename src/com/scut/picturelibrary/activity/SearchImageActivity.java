@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -65,6 +66,7 @@ public class SearchImageActivity extends ActionBarActivity implements
 	private TabHost mtabhost;
 	private GridView nGridView;
 	private TextView textview;
+	private TextView textview1;
 	private final String SORT_BY_NAME = MediaStore.Images.Media.DISPLAY_NAME;
 	private final String SORT_BY_DATE = MediaStore.Images.Media.DATE_MODIFIED;
 	private String mSort = SORT_BY_NAME;
@@ -83,12 +85,13 @@ public class SearchImageActivity extends ActionBarActivity implements
 
 	private void initView() {
 		textview = (TextView) findViewById(R.id.tv);
+		textview1 = (TextView) findViewById(R.id.tv1);
 		mtabhost = (TabHost) findViewById(R.id.tabhost);
 		mtabhost.setup();
 		mtabhost.addTab(mtabhost.newTabSpec("tab1").setIndicator("本地图片")
 				.setContent(R.id.local));
 		mtabhost.addTab(mtabhost.newTabSpec("tab2").setIndicator("网络图片")
-				.setContent(R.id.grid_net_files));
+				.setContent(R.id.net));
 		mGridView = (GridView) findViewById(R.id.grid_local_files);
 		mAdapter = new MediaFilesAdapter(this, null);
 		mGridView.setAdapter(mAdapter);
@@ -151,23 +154,13 @@ public class SearchImageActivity extends ActionBarActivity implements
 				final String path = mAdapter.getPath(position);
 				final String time = mAdapter.getTime(position);
 				if (mAdapter.getType(position).equals("video")) {// 视频
-					final String VideoTime = mAdapter.getVideoTime(position);
+					final String videoTime = mAdapter.getVideoTime(position);
 					final String size = mAdapter.getVideoSize(position);
+					final int videosecond = mAdapter.getVideoSecond(position);
+					// 显示视频长按菜单
 					DialogManager.showVideoItemMenuDialog(
-							SearchImageActivity.this, filename,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									if (which == 0) {
-										DialogManager.showVideoPropertyDialog(
-												SearchImageActivity.this,
-												filename, path, filesize, size,
-												VideoTime, time);
-									}
-
-								}
-							});
+							SearchImageActivity.this, filename, filename, path,
+							filesize, size, videoTime, time,videosecond);
 				}
 
 				else { // 图片
@@ -226,6 +219,15 @@ public class SearchImageActivity extends ActionBarActivity implements
 				Uri content_url = Uri.parse(nAdapter.getFromURL(position));
 				intent.setData(content_url);
 				startActivity(intent);
+			}
+		});
+		textview1.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				textview1.setVisibility(View.GONE);
+				Log.v("text",query);
+            getSearchImage(query);
+            nGridView.setVisibility(View.VISIBLE);
 			}
 		});
 	}
@@ -328,9 +330,12 @@ public class SearchImageActivity extends ActionBarActivity implements
 				Log.v("text", text);
 				if (text != null) {
 					query = text;
-					nAdapter.clear();
+					if(	mtabhost.getCurrentTabTag()=="tab2"){
+						nGridView.setVisibility(View.GONE);
+						textview1.setVisibility(View.VISIBLE);		
+						textview1.setText("   查找'"+text+"'相关的图片");
+						nAdapter.clear();}
 					// 获取搜索内容
-					getSearchImage(query);
 					getSupportLoaderManager().restartLoader(LOAD_ID, null,
 							SearchImageActivity.this);
 				}

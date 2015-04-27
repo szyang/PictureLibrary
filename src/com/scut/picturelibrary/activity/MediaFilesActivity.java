@@ -122,10 +122,11 @@ public class MediaFilesActivity extends ActionBarActivity implements
 				if (mAdapter.getType(position).equals("video")) {// 视频
 					final String videoTime = mAdapter.getVideoTime(position);
 					final String size = mAdapter.getVideoSize(position);
+					final int videosecond = mAdapter.getVideoSecond(position);
 					// 显示视频长按菜单
 					DialogManager.showVideoItemMenuDialog(
 							MediaFilesActivity.this, filename, filename, path,
-							filesize, size, videoTime, time);
+							filesize, size, videoTime, time,videosecond);
 
 				} else { // 图片
 					final String size = mAdapter.getImageSize(position);
