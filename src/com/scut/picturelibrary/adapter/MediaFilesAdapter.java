@@ -216,7 +216,13 @@ public class MediaFilesAdapter extends CursorAdapter {
 		return videotime;
 
 	}
-
+	public int getVideoSecond(int index)
+	{		Cursor c = getCursor();
+	c.moveToPosition(index);
+	int VideoTime = c.getInt(c
+			.getColumnIndex(MediaStore.Video.Media.DURATION)) / 1000;
+	return VideoTime;
+	}
 	public String getVideoSize(int index) {
 		Cursor c = getCursor();
 		String path = c
