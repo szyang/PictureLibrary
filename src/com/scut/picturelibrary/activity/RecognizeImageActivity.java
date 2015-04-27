@@ -271,8 +271,9 @@ public class RecognizeImageActivity extends ActionBarActivity {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (bmobProFile != null && !path.endsWith(".gif")) {
-			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 80,
+		if (bmobProFile != null && !path.endsWith(".gif")) {//gif 格式无法压缩
+			// 压缩图片格式为200*200，100质量
+			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 100,
 					new LocalThumbnailListener() {
 
 						@Override
