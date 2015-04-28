@@ -63,6 +63,7 @@ public class CameraManager {
 		Camera.Parameters parameters = camera.getParameters();
 		List<Camera.Size> mSupportedsizeList = parameters
 				.getSupportedPictureSizes();
+		parameters.setRotation(90);
 		if (mSupportedsizeList.size() > 1) {
 			Iterator<Camera.Size> itos = mSupportedsizeList.iterator();
 			while (itos.hasNext()) {
