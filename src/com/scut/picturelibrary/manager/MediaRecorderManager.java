@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
+import android.hardware.Camera.Size;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -29,6 +28,14 @@ public class MediaRecorderManager {
 	private Context context;
 
 	private Camera mCamera;
+	// 手机支持的分辨率
+	private List<Size> supportedVideoSizes;
+
+	private Size size;
+
+	int setFixVideoWidth = 0;
+
+	int setFixVideoHeight = 0;
 
 	private MediaRecorder mediaRecorder;
 
@@ -50,17 +57,17 @@ public class MediaRecorderManager {
 		return mediaRecorder;
 	}
 
-	@SuppressLint("InlinedApi")
 	public void startRecord(Camera camera, SurfaceHolder holder) {
 		mediaRecorder.reset();
 		List<Camera.Size> videoSize = camera.getParameters().getSupportedVideoSizes();
 		camera.unlock();
 		mediaRecorder.setCamera(camera);
+		mediaRecorder.setOrientationHint(90);
 		// 设置录音源
 		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		// 设置视频源
 		mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-		// 设置视频和声音的编码
+		// 设置输出格式，视频和声音的编码格式
 		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		int setFixPictureWidth = 0,setFixPictureHeight = 0;
 		Iterator<Camera.Size> itos = videoSize.iterator();
@@ -76,10 +83,26 @@ public class MediaRecorderManager {
 		mediaRecorder.setVideoSize(setFixPictureWidth, setFixPictureHeight);
 		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-		// 设置视频编码率，使拍摄质量更高
-		mediaRecorder.setVideoEncodingBitRate(15 * 1024 * 1024);
-//		mediaRecorder.setProfile(CamcorderProfile
-//				.get(CamcorderProfile.QUALITY_HIGH));
+		// 设置视频采样率，每秒30帧
+		mediaRecorder.setVideoFrameRate(30);
+
+		Camera.Parameters parameters = camera.getParameters();
+		// 获取手机支持的所有分辨率
+		supportedVideoSizes = parameters.getSupportedVideoSizes();
+		Iterator<Size> itos = supportedVideoSizes.iterator();
+		while (itos.hasNext()) {
+			size = itos.next();
+			int supportedSize = size.width * size.height;
+			int fixVideoSize = setFixVideoWidth * setFixVideoHeight;
+			// 获取最大分辨率
+			if (supportedSize > fixVideoSize) {
+				setFixVideoWidth = size.width;
+				setFixVideoHeight = size.height;
+			}
+		}
+		// 设置视频分辨率
+		mediaRecorder.setVideoSize(setFixVideoWidth, setFixVideoHeight);
+
 		filePath = FileUtil.getOutPutMediaFile(MEDIA_TYPE_RECORDER).toString();
 		// 设置视频输出文件
 		mediaRecorder.setOutputFile(filePath);

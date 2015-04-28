@@ -112,7 +112,6 @@ public class SurfaceViewManager extends SurfaceView implements
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int arg1, int width,
 			int height) {
-
 	}
 
 	@Override
@@ -120,8 +119,7 @@ public class SurfaceViewManager extends SurfaceView implements
 		switch (mediaType) {
 		case 1:
 			openCamera(holder);
-			// 设置预览的角度
-			mCamera.setDisplayOrientation(lastBtOrientation + 90);
+			mCameraManager.setCameraParameters(mCamera);
 			break;
 
 		case 2:

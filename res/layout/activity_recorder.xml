@@ -25,15 +25,6 @@
             android:background="#00000000"
             android:src="@drawable/img_media_back" />
 
-        <TextView
-            android:id="@+id/tv_recorder_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
-            android:background="#00000000"
-            android:text="00:00" />
     </RelativeLayout>
 
     <LinearLayout
