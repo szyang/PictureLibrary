@@ -11,14 +11,19 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 
-public class MyImageView extends ImageView implements OnGlobalLayoutListener, OnScaleGestureListener, OnTouchListener, OnClickListener
+/**
+ * 显示图片，进行缩放，移动操作
+ * 
+ * @author 邝岳臻
+ *
+ */
+public class MyImageView extends ImageView implements OnGlobalLayoutListener, OnScaleGestureListener, OnTouchListener
 {
 
 	private boolean mOnce;
@@ -32,10 +37,9 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 	
 	//得到手指缩放值
 	private ScaleGestureDetector mScaleGestureDetector;
-	//双击事件
+	//双击事件,单击事件
 	private GestureDetector mGestureDetector;
-	//单击事件
-	private GestureDetector oneTouchDetector;
+
 	private boolean scale_ing;
 	
 	//触屏点的数量,移动
@@ -44,6 +48,11 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 	private float mY0;
 	private int mTouchSlop;
 	private boolean isCanDrag;
+	
+	//判断方向
+	private float last_x;
+	private float present_x;
+	private int direct;
 	
 	//要否检测上下左右白边情况
 	private boolean checkLeftRight;
@@ -58,28 +67,19 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 		
 		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 		
-		//单击事件
-		oneTouchDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
-			
-			public boolean onSingelTapUp(MotionEvent event)
-			{
-				if (scale_ing)
-					return true;
-				
-				//显示actionbar
-				
-				return true;
-			}
-			
-		});
+		direct = 0;
+		present_x =0;
+		last_x = 0;
 		
-		//双击事件
+		//双击事件,单击事件
 		mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
 			@Override
 			public boolean onDoubleTap(MotionEvent event)
 			{
 				if (scale_ing)
 					return true;
+				
+				Log.v("Double Tap","Double Tap");
 				
 				float x = event.getX();
 				float y = event.getY();
@@ -100,11 +100,21 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 				
 				return true;
 			}
+			
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				
+				if (scale_ing)
+					return true;
+				
+				Log.v("Single Tap","Single Tap");
+				return false;
+			}
+			
 		});
 		
 		mScaleGestureDetector = new ScaleGestureDetector(context, this);
 		setOnTouchListener(this);
-		setOnClickListener(this);
 		
 	} 
 
@@ -388,13 +398,25 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 		
 		RectF rectF = getMatrixRectF();
 		
+		last_x = present_x;
+		present_x = rectF.centerX();
+		if (last_x>present_x)
+			direct = -1;
+		else if (last_x<present_x)
+			direct = 1;
+		
+		Log.v("last_x",Float.toString(last_x));
+		Log.v("present_x",Float.toString(present_x));
+		Log.v("direct",Integer.toString(direct));
+		
 		switch (event.getAction())
 		{
 		
 		case MotionEvent.ACTION_DOWN:
 			
-			//放大时移动不换图
-			if (rectF.width() > (getWidth()+0.01) || rectF.height() > (getHeight()+0.01))
+			//放大时移动与换图不冲突
+			if ( (rectF.width() > (getWidth()+0.01) || rectF.height() > (getHeight()+0.01))
+					&& ( rectF.left!=0 && rectF.right!=getWidth() ) )
 			{
 				if (getParent() instanceof ViewParent)
 					getParent().requestDisallowInterceptTouchEvent(true);
@@ -404,7 +426,8 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 		
 		case MotionEvent.ACTION_MOVE:
 			
-			if (rectF.width() > (getWidth()+0.01) || rectF.height() > (getHeight()+0.01))
+			if ( (rectF.width() > (getWidth()+0.01) || rectF.height() > (getHeight()+0.01))
+					&& !( rectF.left==0 && direct ==1 ) && !( rectF.right==getWidth() && direct==-1) )
 			{
 				if (getParent() instanceof ViewParent)
 					getParent().requestDisallowInterceptTouchEvent(true);
@@ -500,12 +523,5 @@ public class MyImageView extends ImageView implements OnGlobalLayoutListener, On
 			return true;
 		return false;
 	}
-
-	@Override
-	public void onClick(View arg0) {
-		
-		
-		
-	}	
 	
 }
