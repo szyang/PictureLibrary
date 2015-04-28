@@ -119,6 +119,7 @@ public class SurfaceViewManager extends SurfaceView implements
 		switch (mediaType) {
 		case 1:
 			openCamera(holder);
+			mCamera.setDisplayOrientation(lastBtOrientation + 90);
 			mCameraManager.setCameraParameters(mCamera);
 			break;
 

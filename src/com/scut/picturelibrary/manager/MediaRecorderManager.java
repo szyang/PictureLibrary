@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -28,14 +27,6 @@ public class MediaRecorderManager {
 	private Context context;
 
 	private Camera mCamera;
-	// 手机支持的分辨率
-	private List<Size> supportedVideoSizes;
-
-	private Size size;
-
-	int setFixVideoWidth = 0;
-
-	int setFixVideoHeight = 0;
 
 	private MediaRecorder mediaRecorder;
 
@@ -62,24 +53,25 @@ public class MediaRecorderManager {
 		List<Camera.Size> videoSize = camera.getParameters().getSupportedVideoSizes();
 		camera.unlock();
 		mediaRecorder.setCamera(camera);
+		//设置方向
+		mediaRecorder.setOrientationHint(90);
 		// 设置录音源
 		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		// 设置视频源
 		mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 		// 设置输出格式，视频和声音的编码格式
 		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-		int setFixPictureWidth = 0,setFixPictureHeight = 0;
+		int setFixVideoWidth = 0,setFixVideoHeight = 0;
 		Iterator<Camera.Size> itos = videoSize.iterator();
 		while (itos.hasNext()) {
 			Camera.Size curSize = itos.next();
 			int curSupporSize = curSize.width * curSize.height;
-			int fixPictrueSize = setFixPictureWidth * setFixPictureHeight;
+			int fixPictrueSize = setFixVideoWidth * setFixVideoHeight;
 			if (curSupporSize > fixPictrueSize) {
-				setFixPictureWidth = curSize.width;
-				setFixPictureHeight = curSize.height;
+				setFixVideoWidth = curSize.width;
+				setFixVideoHeight = curSize.height;
 			}
 		}
-		mediaRecorder.setVideoSize(setFixPictureWidth, setFixPictureHeight);
 		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 		// 设置视频采样率，每秒30帧
