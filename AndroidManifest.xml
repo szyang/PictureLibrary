@@ -89,8 +89,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
             android:name="com.scut.picturelibrary.activity.SimpleImageActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.scut.picturelibrary.activity.FilterActivity"
