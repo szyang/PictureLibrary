@@ -57,10 +57,10 @@ public class CameraManager {
 
 	}
 
-	@SuppressLint("NewApi")
 	// 设置预览时的图像和拍照的参数
 	public void setCameraParameters(Camera camera) {
 		Camera.Parameters parameters = camera.getParameters();
+		parameters.setRotation(90);
 		List<Camera.Size> mSupportedsizeList = parameters
 				.getSupportedPictureSizes();
 		if (mSupportedsizeList.size() > 1) {
@@ -80,9 +80,6 @@ public class CameraManager {
 			parameters.setPictureSize(setFixPictureWidth, setFixPictureHeight);
 			parameters.setJpegQuality(100);
 			camera.setParameters(parameters);
-			if (parameters.getMaxNumDetectedFaces() > 0) {
-				camera.startFaceDetection();
-			}
 		}
 
 	}

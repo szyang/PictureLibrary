@@ -1,8 +1,12 @@
 package com.scut.picturelibrary.activity;
 
+import java.lang.ref.WeakReference;
+
 import android.app.Activity;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -14,10 +18,12 @@ import android.widget.Toast;
 import com.scut.picturelibrary.R;
 import com.scut.picturelibrary.animation.MyRecorderButtonAnimation;
 import com.scut.picturelibrary.manager.SurfaceViewManager;
+
 /**
  * 录像
+ * 
  * @author cyc
- *
+ * 
  */
 public class MediaRecorderActivity extends Activity implements OnClickListener {
 
@@ -41,6 +47,8 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 	// 是否正在录制
 	private boolean isRecording = false;
 
+	private MyHandler handler;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,6 +65,8 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 		recorder = mSurfaceViewManager.getMyMediaRecorder();
 		mRecorderPreview = (FrameLayout) findViewById(R.id.fl_recorder_preview);
 		mRecorderPreview.addView(mSurfaceViewManager);
+
+		handler = new MyHandler(this);
 	}
 
 	@Override
@@ -70,7 +80,7 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 				isRecording = false;
 				Toast.makeText(MediaRecorderActivity.this, "录制完成",
 						Toast.LENGTH_SHORT).show();
-				//录像完毕后扫描文件
+				// 录像完毕后扫描文件
 				mSurfaceViewManager.scanFile();
 				minute = 0;
 				second = 0;
@@ -116,8 +126,12 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 							minute++;
 							second = 0;
 							time = String.format("%02d:%02d", minute, second);
-							mRecorderTime.setText(time);
 						}
+						Message msg = new Message();
+						Bundle bundle = new Bundle();
+						bundle.putString("time", time);
+						msg.setData(bundle);
+						handler.sendMessage(msg);
 						sleep(1000);
 					} catch (Exception e) {
 
@@ -126,6 +140,20 @@ public class MediaRecorderActivity extends Activity implements OnClickListener {
 			}
 
 		}.start();
+	}
+
+	public class MyHandler extends Handler {
+		WeakReference<MediaRecorderActivity> wp;
+
+		public MyHandler(MediaRecorderActivity act) {
+			this.wp = new WeakReference<MediaRecorderActivity>(act);
+		}
+
+		public void handleMessage(Message msg) {
+			MediaRecorderActivity act = wp.get();
+			act.mRecorderTime.setText(msg.getData().getString("time"));
+		}
+
 	}
 
 	@Override
