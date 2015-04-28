@@ -62,7 +62,6 @@ public class MediaRecorderManager {
 		List<Camera.Size> videoSize = camera.getParameters().getSupportedVideoSizes();
 		camera.unlock();
 		mediaRecorder.setCamera(camera);
-		mediaRecorder.setOrientationHint(90);
 		// 设置录音源
 		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		// 设置视频源
@@ -86,20 +85,6 @@ public class MediaRecorderManager {
 		// 设置视频采样率，每秒30帧
 		mediaRecorder.setVideoFrameRate(30);
 
-		Camera.Parameters parameters = camera.getParameters();
-		// 获取手机支持的所有分辨率
-		supportedVideoSizes = parameters.getSupportedVideoSizes();
-		Iterator<Size> itos = supportedVideoSizes.iterator();
-		while (itos.hasNext()) {
-			size = itos.next();
-			int supportedSize = size.width * size.height;
-			int fixVideoSize = setFixVideoWidth * setFixVideoHeight;
-			// 获取最大分辨率
-			if (supportedSize > fixVideoSize) {
-				setFixVideoWidth = size.width;
-				setFixVideoHeight = size.height;
-			}
-		}
 		// 设置视频分辨率
 		mediaRecorder.setVideoSize(setFixVideoWidth, setFixVideoHeight);
 
