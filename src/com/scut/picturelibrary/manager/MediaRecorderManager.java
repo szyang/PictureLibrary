@@ -1,6 +1,8 @@
 package com.scut.picturelibrary.manager;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -51,6 +53,7 @@ public class MediaRecorderManager {
 	@SuppressLint("InlinedApi")
 	public void startRecord(Camera camera, SurfaceHolder holder) {
 		mediaRecorder.reset();
+		List<Camera.Size> videoSize = camera.getParameters().getSupportedVideoSizes();
 		camera.unlock();
 		mediaRecorder.setCamera(camera);
 		// 设置录音源
@@ -59,6 +62,18 @@ public class MediaRecorderManager {
 		mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 		// 设置视频和声音的编码
 		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+		int setFixPictureWidth = 0,setFixPictureHeight = 0;
+		Iterator<Camera.Size> itos = videoSize.iterator();
+		while (itos.hasNext()) {
+			Camera.Size curSize = itos.next();
+			int curSupporSize = curSize.width * curSize.height;
+			int fixPictrueSize = setFixPictureWidth * setFixPictureHeight;
+			if (curSupporSize > fixPictrueSize) {
+				setFixPictureWidth = curSize.width;
+				setFixPictureHeight = curSize.height;
+			}
+		}
+		mediaRecorder.setVideoSize(setFixPictureWidth, setFixPictureHeight);
 		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 		// 设置视频编码率，使拍摄质量更高
