@@ -46,7 +46,6 @@ public class FlowTagsLayout extends AdapterView<Adapter> implements
 
 	public FlowTagsLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		setOnTouchListener(this);
 	}
 
 	public FlowTagsLayout(Context context, AttributeSet attrs) {
@@ -350,7 +349,8 @@ public class FlowTagsLayout extends AdapterView<Adapter> implements
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			mTouchStartX = event.getX();
 			mTouchStartY = event.getY();
-			startLongPressCheck();
+			if (null != mOnItemLongClickListener)
+				startLongPressCheck();
 		}
 		if (event.getAction() == MotionEvent.ACTION_UP && !afterLongClick) {
 			// could start short click event
@@ -364,6 +364,8 @@ public class FlowTagsLayout extends AdapterView<Adapter> implements
 				mOnItemClickListener.onItemClick(this, clickView,
 						mSelectedPosition, clickView.getId());
 			}
+			// cancel long click check
+			getHandler().removeCallbacks(mLongPressRunnable);
 		} else if (event.getAction() == MotionEvent.ACTION_UP && afterLongClick) {
 			// could not start short click event
 			// set short click able

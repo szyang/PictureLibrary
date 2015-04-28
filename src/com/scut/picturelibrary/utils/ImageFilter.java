@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class ImageFilter {
 
 	/**
-	 * ����Ƭ
+	 * 旧照片
 	 * 
 	 * @param imageData
 	 * @return
@@ -34,7 +34,7 @@ public class ImageFilter {
 	}
 
 	/**
-	 * �Ҷ�
+	 * 灰度
 	 * 
 	 * @param imageData
 	 * @return
@@ -47,7 +47,7 @@ public class ImageFilter {
 				int oldR = imageData.getR(x, y);
 				int oldG = imageData.getG(x, y);
 				int oldB = imageData.getB(x, y);
-				// �Ҷ�ֵ�㷨
+				// 灰度值算法
 				// f(i,j)=0.30R(i,j)+0.59G(i,j)+0.11B(i,j))
 				int newR = (int) (0.30f * oldR + 0.59f * oldG + 0.11f * oldB);
 				newR = checkRGB(newR);
@@ -59,7 +59,7 @@ public class ImageFilter {
 	}
 
 	/**
-	 * ����
+	 * 动漫
 	 * 
 	 * @param imageData
 	 * @return
@@ -72,18 +72,18 @@ public class ImageFilter {
 				int oldR = imageData.getR(x, y);
 				int oldG = imageData.getG(x, y);
 				int oldB = imageData.getB(x, y);
-				// R = |g �C b + g + r| * r / 256;
+				// R = |g – b + g + r| * r / 256;
 				int newR = (int) (Math.abs(oldG - oldB + oldG + oldR) * oldR / 256);
-				// G = |b �C g + b + r| * r / 256;
+				// G = |b – g + b + r| * r / 256;
 				int newG = (int) (Math.abs(oldB - oldG + oldB + oldR) * oldR / 256);
-				// B = |b �C g + b + r| * g / 256;
+				// B = |b – g + b + r| * g / 256;
 				int newB = (int) (Math.abs(oldB - oldG + oldB + oldR) * oldG / 256);
 
 				newR = checkRGB(newR);
 				newG = checkRGB(newG);
 				newB = checkRGB(newB);
 
-				// �Ҷ�ֵ�㷨
+				// 灰度值算法
 				// f(i,j)=0.30R(i,j)+0.59G(i,j)+0.11B(i,j))
 				newR = newG = newB = (int) (0.30f * newR + 0.59f * newG + 0.11f * newB);
 
@@ -94,7 +94,7 @@ public class ImageFilter {
 	}
 
 	/**
-	 * �����Աȶ�
+	 * 高亮对比度
 	 */
 	public static ImageData brightContrastFilter(ImageData imageData) {
 		float BrightnessFactor = 0.25f;
@@ -156,7 +156,7 @@ public class ImageFilter {
 	}
 
 	/**
-	 * �ڰ�
+	 * 黑白
 	 * 
 	 * @param imageData
 	 * @return
@@ -180,7 +180,7 @@ public class ImageFilter {
 	}
 
 	/**
-	 * ��
+	 * 羽化
 	 * 
 	 * @param image
 	 * @return
@@ -201,7 +201,7 @@ public class ImageFilter {
 		int R, G, B;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				R = image.getR(x, y); // ��ȡRGB��ԭɫ
+				R = image.getR(x, y); // 获取RGB三原色
 				G = image.getG(x, y);
 				B = image.getB(x, y);
 
@@ -239,8 +239,4 @@ public class ImageFilter {
 		return bitmap;
 	}
 
-	public static Bitmap redrawBitmap(Bitmap bmp, ImageData imageData) {
-
-		return bmp;
-	}
 }

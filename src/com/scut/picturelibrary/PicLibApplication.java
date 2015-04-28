@@ -2,7 +2,6 @@ package com.scut.picturelibrary;
 
 import android.app.Application;
 import android.graphics.Bitmap;
-
 import cn.bmob.v3.Bmob;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
