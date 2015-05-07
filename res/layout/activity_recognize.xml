@@ -12,6 +12,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
+            android:scaleType="centerInside"
             android:contentDescription="@string/reco_image" />
 
         <TextView
@@ -29,7 +30,6 @@
             android:id="@+id/ftl_recognize_guess"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:layout_alignBottom="@id/img_recognize_source"
             android:layout_alignParentRight="true"
             android:layout_below="@id/txt_recognize_guess"
             android:layout_marginTop="10dp"

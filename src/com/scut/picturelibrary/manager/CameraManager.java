@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -126,8 +127,17 @@ public class CameraManager {
 				}
 				filePath = pictureFile.getAbsolutePath();
 			} else {
-				// TODO 如果运行到这里会报错的
-				Toast.makeText(context, "SD卡不存在", Toast.LENGTH_SHORT).show();
+				if (context != null && context instanceof Activity) {
+					((Activity) context).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(context, "SD卡不存在",
+									Toast.LENGTH_SHORT).show();
+
+						}
+					});
+				}
 			}
 			return filePath;
 		}

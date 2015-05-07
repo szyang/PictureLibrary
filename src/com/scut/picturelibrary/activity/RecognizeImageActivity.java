@@ -273,7 +273,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		}
 		if (bmobProFile != null && !path.endsWith(".gif")) {//gif 格式无法压缩
 			// 压缩图片格式为200*200，100质量
-			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 100,
+			bmobProFile.getLocalThumbnail(path, 1, 150, 150, 100,
 					new LocalThumbnailListener() {
 
 						@Override
