@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.scut.picturelibrary.Constants;
 import com.scut.picturelibrary.R;
@@ -41,7 +42,10 @@ public class EditActivity extends Activity {
 		String path = getIntent().getStringExtra("path");
 
 		mSquareImageView = (MoveableImageView) findViewById(R.id.sqimg_edit_tartget_image);
+
 		new DecodeTask(path).execute();
+		
+		Toast.makeText(this, "TIP:移动或缩放图片以设置布局", Toast.LENGTH_LONG).show();
 
 		mNextButton = (ImageButton) findViewById(R.id.btn_edit_next);
 		mNextButton.setOnClickListener(new OnClickListener() {

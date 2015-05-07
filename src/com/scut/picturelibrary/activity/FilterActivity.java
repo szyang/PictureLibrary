@@ -43,6 +43,8 @@ public class FilterActivity extends Activity {
 
 		new DecodeTask(bitmapBytes).execute();
 
+		Toast.makeText(this, "TIP:为图片添加滤镜", Toast.LENGTH_LONG).show();
+
 		mNextButton = (ImageButton) findViewById(R.id.btn_filter_next);
 		mNextButton.setOnClickListener(new OnClickListener() {
 

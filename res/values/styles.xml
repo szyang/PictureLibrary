@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -35,6 +35,14 @@
         <item name="android:background">@drawable/bg_stroke_rec</item>
         <item name="android:padding">10dp</item>
         <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="FilterOKCancelRelativeLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:background">#77000000</item>
     </style>
 
 </resources>

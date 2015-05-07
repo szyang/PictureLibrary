@@ -1,6 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,8 +13,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
-            android:scaleType="centerInside"
-            android:contentDescription="@string/reco_image" />
+            android:contentDescription="@string/reco_image"
+            android:scaleType="centerInside" />
 
         <TextView
             android:id="@+id/txt_recognize_guess"
@@ -50,7 +51,7 @@
                     android:id="@+id/txt_recognize_insame_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#ffffff"
+                    android:background="#00ffffff"
                     android:contentDescription="@string/reco_image"
                     android:padding="10dp"
                     android:text="@string/same_image"

@@ -18,11 +18,7 @@
             android:background="#ff000000" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:padding="15dp"
-            android:background="#33ffffff" >
+            style="@style/FilterOKCancelRelativeLayoutStyle">
 
             <ImageButton
                 android:id="@+id/btn_text_cancel"

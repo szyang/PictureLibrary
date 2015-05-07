@@ -271,9 +271,9 @@ public class RecognizeImageActivity extends ActionBarActivity {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (bmobProFile != null && !path.endsWith(".gif")) {//gif 格式无法压缩
+		if (bmobProFile != null && !path.endsWith(".gif")) {// gif 格式无法压缩
 			// 压缩图片格式为200*200，100质量
-			bmobProFile.getLocalThumbnail(path, 1, 150, 150, 100,
+			bmobProFile.getLocalThumbnail(path, 1, 200, 200, 100,
 					new LocalThumbnailListener() {
 
 						@Override
@@ -335,17 +335,7 @@ public class RecognizeImageActivity extends ActionBarActivity {
 		// 返回最多3个相同图片
 		mInsameUrl = "http://stu.baidu.com/i?filename=&fm=15&rt=0&pn=0&rn=3&pn=0&ct=1&stt=1&tn=insamejson&ie=utf-8&objurl="
 				+ uploadFileUrl;
-		DialogManager.dismissDialog();
-		DialogManager.showSimpleDialog(RecognizeImageActivity.this, "识别中",
-				"努力识图中，请稍侯", new OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface arg0) {
-						Toast.makeText(RecognizeImageActivity.this, "取消识别",
-								Toast.LENGTH_SHORT).show();
-						// 取消识别任务
-						cancelAllTasks();
-					}
-				});
+
 		GetWorkerTask simitask = new GetWorkerTask();
 		taskCollection.add(simitask);
 		simitask.execute(INSIMI, mInsimiUrl);
@@ -406,6 +396,20 @@ public class RecognizeImageActivity extends ActionBarActivity {
 	private boolean simiTaskOver = false;
 
 	class GetWorkerTask extends AsyncTask<String, Void, JSONObject> {
+		@Override
+		protected void onPreExecute() {
+			DialogManager.dismissDialog();
+			DialogManager.showSimpleDialog(RecognizeImageActivity.this, "识别中",
+					"努力识图中，请稍候...", new OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface arg0) {
+							Toast.makeText(RecognizeImageActivity.this, "取消识别",
+									Toast.LENGTH_SHORT).show();
+							// 取消识别任务
+							cancelAllTasks();
+						}
+					});
+		}
 
 		// params what url
 		@Override

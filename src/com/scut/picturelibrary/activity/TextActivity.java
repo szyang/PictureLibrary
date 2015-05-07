@@ -63,6 +63,9 @@ public class TextActivity extends FragmentActivity {
 		byte[] bitmapBytes = intent.getByteArrayExtra("bitmapBytes");
 
 		new DecodeTask(bitmapBytes).execute();
+
+		Toast.makeText(this, "TIP:点击加号为图片添加文案", Toast.LENGTH_LONG).show();
+
 		mContent = new ArrayList<Fragment>();
 		mContent.add(new TextSettingFragment(mEdtImageViewLayout));
 		mContent.add(new TextFontFragment(mEdtImageViewLayout));
