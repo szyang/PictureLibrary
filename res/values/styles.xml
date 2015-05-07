@@ -25,8 +25,8 @@
     </style>
 
     <style name="anim_linearlayout">
-        <item name="android:windowEnterAnimation">@anim/window_in</item>
-        <item name="android:windowExitAnimation">@anim/window_out</item>
+        <item name="android:windowEnterAnimation">@anim/bottom_window_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_window_out</item>
     </style>
 
     <style name="FlatButtonStyle">

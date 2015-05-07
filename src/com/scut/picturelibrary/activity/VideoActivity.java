@@ -63,10 +63,14 @@ public class VideoActivity extends Activity implements OnClickListener,
 	private MediaPlayer mediaPlayer;
 	// 播放的文件路径
 	private String filePath;
-	// 窗口进入动画
-	private Animation windowInAnimation;
-	// 窗口退出动画
-	private Animation windowOutAnimation;
+	// 底部窗口进入动画
+	private Animation bottomWindowInAnimation;
+	// 底部窗口退出动画
+	private Animation bottomWindowOutAnimation;
+	// 顶部窗口进入动画
+	private Animation topWindowInAnimation;
+	// 顶部窗口退出动画
+	private Animation topWindowOutAnimation;
 	// 视频播放当前时间
 	private int currentTime;
 	// 竖屏缩放布局
@@ -95,10 +99,19 @@ public class VideoActivity extends Activity implements OnClickListener,
 		mVideoPlay = (ImageButton) findViewById(R.id.ibtn_video_play);
 		mVideoPlay.setOnClickListener(this);
 
-		windowInAnimation = AnimationUtils
-				.loadAnimation(this, R.anim.window_in);
-		windowOutAnimation = AnimationUtils.loadAnimation(this,
-				R.anim.window_out);
+		bottomWindowInAnimation = AnimationUtils.loadAnimation(this,
+				R.anim.bottom_window_in);
+		bottomWindowInAnimation.setFillAfter(true);
+		bottomWindowOutAnimation = AnimationUtils.loadAnimation(this,
+				R.anim.bottom_window_out);
+		bottomWindowOutAnimation.setFillAfter(true);
+		
+		topWindowInAnimation = AnimationUtils.loadAnimation(this,
+				R.anim.top_window_in);
+		topWindowInAnimation.setFillAfter(true);
+		topWindowOutAnimation = AnimationUtils.loadAnimation(this,
+				R.anim.top_window_out);
+		topWindowOutAnimation.setFillAfter(true);
 
 		// 传入的第二个参数为媒体类型，第三个参数为文件路径
 		mSurfaceViewManager = new SurfaceViewManager(this,
@@ -214,19 +227,18 @@ public class VideoActivity extends Activity implements OnClickListener,
 		if (view.getId() != R.id.seb_video) {
 			if (eventaction == MotionEvent.ACTION_DOWN) {
 				if (llPlayLayout.getVisibility() == View.VISIBLE) {
+					llPlayLayout.startAnimation(bottomWindowOutAnimation);
 					llPlayLayout.setVisibility(View.GONE);
-					llPlayLayout.startAnimation(windowOutAnimation);
 				} else {
+					llPlayLayout.startAnimation(bottomWindowInAnimation);
 					llPlayLayout.setVisibility(View.VISIBLE);
-					llPlayLayout.startAnimation(windowInAnimation);
 				}
 				if (llSeekBarLayout.getVisibility() == View.VISIBLE) {
+					llSeekBarLayout.startAnimation(topWindowOutAnimation);
 					llSeekBarLayout.setVisibility(View.GONE);
-					llSeekBarLayout.startAnimation(windowInAnimation);
 				} else {
+					llSeekBarLayout.startAnimation(topWindowInAnimation);
 					llSeekBarLayout.setVisibility(View.VISIBLE);
-					llSeekBarLayout.startAnimation(windowOutAnimation);
-
 				}
 			}
 		}
